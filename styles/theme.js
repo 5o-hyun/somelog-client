@@ -20,13 +20,13 @@ export const colors = {
 export const flex = {
   center: `
     display:flex;
-    justify-contents:center;
+    justify-content:center;
     align-items:center;
   `,
   centerColumn: `
     display:flex;
     flex-direction:column;
-    justify-contents:center;
+    justify-content:center;
     align-items:center;
   `,
 };

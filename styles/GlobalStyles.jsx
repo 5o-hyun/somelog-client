@@ -5,7 +5,7 @@ export const GlobalStyles = createGlobalStyle`
     ${normalize}
     html,
     body {
-        background-color: ${({ theme }) => theme.colors.backgroundColor};
+        background-color: ${({ theme }) => theme.colors.white};
         color:${({ theme }) => theme.colors.textColor};
         font-family: 'Noto Sans KR', sans-serif;
         -webkit-user-select:none;
