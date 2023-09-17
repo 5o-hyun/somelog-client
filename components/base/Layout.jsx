@@ -17,6 +17,7 @@ const Container = styled.div`
   width: 576px;
   min-height: 100vh;
   margin: 0 auto;
+  position: relative;
   main {
     padding: 16px 40px 0;
     @media ${({ theme }) => theme.devices.mobile} {

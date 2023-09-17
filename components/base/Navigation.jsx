@@ -35,6 +35,7 @@ const Container = styled.nav`
   bottom: 0;
   padding: 0 40px;
   background-color: ${({ theme }) => theme.colors.white};
+  z-index: 10;
   ${({ theme }) => theme.flex.center};
   @media ${({ theme }) => theme.devices.mobile} {
     padding: 0 20px;
