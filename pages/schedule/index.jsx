@@ -1,11 +1,11 @@
 import Layout from '@components/base/Layout';
-import CalenderHomeContainer from '@container/calender/CalenderHomeContainer';
+import ScheduleHomeContainer from '@container/schedule/ScheduleHomeContainer';
 import React from 'react';
 
 const index = () => {
   return (
     <Layout>
-      <CalenderHomeContainer />
+      <ScheduleHomeContainer />
     </Layout>
   );
 };
