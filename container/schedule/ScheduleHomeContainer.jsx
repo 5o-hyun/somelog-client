@@ -63,7 +63,6 @@ const ScheduleHomeContainer = () => {
   const cellRender = (current, info) => {
     let titles = [];
     schedules?.forEach((schedule) => {
-      // console.log(current, dayjs(schedule.startDate));
       const startDate = dayjs(schedule.startDate);
       const endDate = dayjs(schedule.endDate);
       if (
