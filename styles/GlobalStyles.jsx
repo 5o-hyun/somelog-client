@@ -53,4 +53,8 @@ export const GlobalStyles = createGlobalStyle`
         overflow: hidden;
         color:white;
     }
+    .ant-drawer-content-wrapper {
+        box-shadow: none !important;
+        height: fit-content !important;
+    }
 `;
