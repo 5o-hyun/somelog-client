@@ -10,6 +10,7 @@ import isSameOrAfter from 'dayjs/plugin/isSameOrAfter';
 import CalenderModal from '@components/schedule/CalenderModal';
 import Category from '@components/schedule/Category';
 import { getCategoryList } from '@lib/api/category';
+import ScheduleDrawer from '@components/schedule/ScheduleDrawer';
 
 dayjs.extend(isBetween);
 dayjs.extend(isSameOrBefore);
@@ -20,6 +21,7 @@ const ScheduleHomeContainer = () => {
   const [selectDate, setSelectDate] = useState();
   const [todaySchedules, setTodaySchedules] = useState([]);
   const [isToggleCategory, setToggleCategory] = useState(false);
+  const [isOpenSchedule, setIsOpenSchedule] = useState(false);
 
   const modalSave = () => {
     // 수정 저장
@@ -84,6 +86,11 @@ const ScheduleHomeContainer = () => {
     setToggleCategory((prev) => !prev);
   };
 
+  const onToggleSchedule = () => {
+    isToggleCategory === true && setToggleCategory(false);
+    setIsOpenSchedule((prev) => !prev);
+  };
+
   return (
     <Container>
       <Calender
@@ -102,8 +109,13 @@ const ScheduleHomeContainer = () => {
         />
       )}
       {isToggleCategory && (
-        <Category categories={categories} onToggleCategory={onToggleCategory} />
+        <Category
+          categories={categories}
+          onToggleCategory={onToggleCategory}
+          onToggleSchedule={onToggleSchedule}
+        />
       )}
+      {isOpenSchedule && <ScheduleDrawer onToggleSchedule={onToggleSchedule} />}
     </Container>
   );
 };

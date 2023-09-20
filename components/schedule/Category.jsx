@@ -2,7 +2,7 @@ import React from 'react';
 import { Badge, Drawer } from 'antd';
 import styled from 'styled-components';
 
-const Category = ({ categories, onToggleCategory }) => {
+const Category = ({ categories, onToggleCategory, onToggleSchedule }) => {
   return (
     <StyledDrawer
       title="카테고리 선택"
@@ -16,6 +16,7 @@ const Category = ({ categories, onToggleCategory }) => {
           key={category.id}
           color={category.color}
           text={category.category}
+          onClick={onToggleSchedule}
         />
       ))}
     </StyledDrawer>
