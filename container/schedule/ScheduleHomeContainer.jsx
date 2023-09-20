@@ -95,6 +95,7 @@ const ScheduleHomeContainer = () => {
         <CalenderModal
           selectDate={selectDate}
           todaySchedules={todaySchedules}
+          categories={categories}
           onToggleCategory={onToggleCategory}
           modalSave={modalSave}
           modalClose={modalClose}

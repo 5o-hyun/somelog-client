@@ -9,6 +9,8 @@ dayjs.locale('ko');
 const CalenderModal = ({
   selectDate,
   todaySchedules,
+  categories,
+  onToggleCategory,
   modalSave,
   modalClose,
 }) => {
@@ -22,15 +24,22 @@ const CalenderModal = ({
     >
       <ul className="scheduleList">
         {todaySchedules.map((schedule) => {
+          const pickCategory = categories.find(
+            (v) => v.category === schedule.category,
+          );
           return (
-            <li key={schedule.id} className="schedule">
+            <Schedule
+              key={schedule.id}
+              className="schedule"
+              color={pickCategory ? pickCategory.color : 'black'}
+            >
               <p className="category">{schedule.category}</p>
               <p>{schedule.title}</p>
-            </li>
+            </Schedule>
           );
         })}
       </ul>
-      <StyledButton className="addScheduleButton">
+      <StyledButton className="addScheduleButton" onClick={onToggleCategory}>
         + 할 일을 추가하세요.
       </StyledButton>
     </StyledModal>
@@ -45,7 +54,6 @@ const StyledModal = styled(Modal)`
     flex-direction: column;
     gap: 8px;
     .schedule {
-      background-color: ${({ theme }) => theme.colors.primaryColor};
       padding: 8px 12px;
       border-radius: 8px;
       .category {
@@ -69,6 +77,9 @@ const StyledButton = styled(Button)`
     background-color: ${({ theme }) => theme.colors.gray[400]};
     color: ${({ theme }) => theme.colors.white} !important;
   }
+`;
+const Schedule = styled.li`
+  background-color: ${(props) => props.color};
 `;
 
 export default CalenderModal;
