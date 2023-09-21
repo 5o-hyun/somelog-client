@@ -22,6 +22,7 @@ const ScheduleHomeContainer = () => {
   const [todaySchedules, setTodaySchedules] = useState([]);
   const [isToggleCategory, setToggleCategory] = useState(false);
   const [isOpenSchedule, setIsOpenSchedule] = useState(false);
+  const [selectCategory, setSelectCategory] = useState();
 
   const modalSave = () => {
     // 수정 저장
@@ -85,6 +86,11 @@ const ScheduleHomeContainer = () => {
     setToggleCategory((prev) => !prev);
   };
 
+  const onSelectCategory = (category) => {
+    setSelectCategory(category);
+    onToggleSchedule();
+  };
+
   const onToggleSchedule = () => {
     isToggleCategory === true && setToggleCategory(false);
     setIsOpenSchedule((prev) => !prev);
@@ -111,10 +117,16 @@ const ScheduleHomeContainer = () => {
         <Category
           categories={categories}
           onToggleCategory={onToggleCategory}
+          onSelectCategory={onSelectCategory}
+        />
+      )}
+      {isOpenSchedule && (
+        <ScheduleDrawer
+          selectDate={selectDate}
+          selectCategory={selectCategory}
           onToggleSchedule={onToggleSchedule}
         />
       )}
-      {isOpenSchedule && <ScheduleDrawer onToggleSchedule={onToggleSchedule} />}
     </Container>
   );
 };
