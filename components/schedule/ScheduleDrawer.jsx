@@ -1,3 +1,4 @@
+import { createSchedule } from '@lib/api/schedule';
 import { Drawer, Input, DatePicker } from 'antd';
 import TextArea from 'antd/es/input/TextArea';
 import dayjs from 'dayjs';
@@ -5,6 +6,7 @@ import React, { useState } from 'react';
 import { BiCalendarHeart, BiNote, BiSolidNote } from 'react-icons/bi';
 import { BsArrowUpShort } from 'react-icons/bs';
 import { HiPaperAirplane } from 'react-icons/hi2';
+import { useMutation } from 'react-query';
 import styled from 'styled-components';
 
 const ScheduleDrawer = ({ selectDate, selectCategory, onToggleSchedule }) => {
@@ -18,12 +20,27 @@ const ScheduleDrawer = ({ selectDate, selectCategory, onToggleSchedule }) => {
     category: selectCategory.category,
   });
 
+  const createScheduleMutation = useMutation(createSchedule, {
+    onSuccess: () => {
+      console.log('성공');
+    },
+    onError: (error) => {
+      console.error(error);
+    },
+    onSettled: () => {
+      console.log('실행중이긴하니');
+    },
+  });
+
+  const onClickConfirm = () => {
+    createScheduleMutation.mutate(info);
+  };
+
   const onChangeDatePicker = (date, dateString) => {
     // console.log(date, dateString);
     setInfo({ ...info, startDate: date, endDate: date });
     setIsToggleDateBtn(false);
   };
-  console.log(info);
 
   const onChangeTitle = (e) => {
     setInfo({ ...info, title: e.target.value });
@@ -80,7 +97,7 @@ const ScheduleDrawer = ({ selectDate, selectCategory, onToggleSchedule }) => {
           </div>
           <div className="infoCategory">{selectCategory.category}</div>
         </div>
-        <div className="confirmButton">
+        <div className="confirmButton" onClick={onClickConfirm}>
           <HiPaperAirplane />
         </div>
       </div>
