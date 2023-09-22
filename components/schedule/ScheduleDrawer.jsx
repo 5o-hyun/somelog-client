@@ -15,7 +15,7 @@ const ScheduleDrawer = ({ selectDate, selectCategory, onToggleSchedule }) => {
     memo: '',
     startDate: selectDate,
     endDate: selectDate,
-    category: '',
+    category: selectCategory.category,
   });
 
   const onChangeDatePicker = (date, dateString) => {
@@ -25,6 +25,9 @@ const ScheduleDrawer = ({ selectDate, selectCategory, onToggleSchedule }) => {
   };
   console.log(info);
 
+  const onChangeTitle = (e) => {
+    setInfo({ ...info, title: e.target.value });
+  };
   const onChangeMemo = (e) => {
     setInfo({ ...info, memo: e.target.value });
   };
@@ -42,10 +45,14 @@ const ScheduleDrawer = ({ selectDate, selectCategory, onToggleSchedule }) => {
       onClose={onToggleSchedule}
       open
     >
-      <Input placeholder="할 일을 입력하세요." className="title" />
+      <Input
+        placeholder="할 일을 입력하세요."
+        className="title"
+        onChange={onChangeTitle}
+      />
       {isOpenMemo && (
         <div className="memoBox">
-          <TextArea rows={4} onChange={onChangeMemo} />
+          <TextArea rows={4} value={info.memo} onChange={onChangeMemo} />
         </div>
       )}
       <div className="wrapper">
