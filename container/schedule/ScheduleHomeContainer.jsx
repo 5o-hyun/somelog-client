@@ -11,6 +11,9 @@ import CalenderModal from '@components/schedule/CalenderModal';
 import Category from '@components/schedule/Category';
 import { getCategoryList } from '@lib/api/category';
 import ScheduleDrawer from '@components/schedule/ScheduleDrawer';
+import 'dayjs/locale/ko';
+
+dayjs.locale('ko');
 
 dayjs.extend(isBetween);
 dayjs.extend(isSameOrBefore);
@@ -23,11 +26,6 @@ const ScheduleHomeContainer = () => {
   const [isToggleCategory, setToggleCategory] = useState(false);
   const [isOpenSchedule, setIsOpenSchedule] = useState(false);
   const [selectCategory, setSelectCategory] = useState();
-
-  const modalSave = () => {
-    // 수정 저장
-    setIsModalOpen(false);
-  };
 
   const modalClose = () => {
     setIsModalOpen(false);
@@ -109,7 +107,6 @@ const ScheduleHomeContainer = () => {
           todaySchedules={todaySchedules}
           categories={categories}
           onToggleCategory={onToggleCategory}
-          modalSave={modalSave}
           modalClose={modalClose}
         />
       )}

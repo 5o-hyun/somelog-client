@@ -2,24 +2,18 @@ import React from 'react';
 import styled from 'styled-components';
 import { Button, Modal } from 'antd';
 import dayjs from 'dayjs';
-import 'dayjs/locale/ko';
-
-dayjs.locale('ko');
 
 const CalenderModal = ({
   selectDate,
   todaySchedules,
   categories,
   onToggleCategory,
-  modalSave,
   modalClose,
 }) => {
   return (
     <StyledModal
       title={selectDate?.format('MM월 DD일 ddd요일')}
       open
-      okText="확인"
-      onOk={modalSave}
       onCancel={modalClose}
     >
       <ul className="scheduleList">

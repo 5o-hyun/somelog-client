@@ -1,6 +1,5 @@
 import { createSchedule } from '@lib/api/schedule';
 import { Drawer, Input, DatePicker } from 'antd';
-import TextArea from 'antd/es/input/TextArea';
 import dayjs from 'dayjs';
 import React, { useState } from 'react';
 import { BiCalendarHeart, BiNote, BiSolidNote } from 'react-icons/bi';
@@ -8,6 +7,8 @@ import { BsArrowUpShort } from 'react-icons/bs';
 import { HiPaperAirplane } from 'react-icons/hi2';
 import { useMutation } from 'react-query';
 import styled from 'styled-components';
+
+const { TextArea } = Input;
 
 const ScheduleDrawer = ({ selectDate, selectCategory, onToggleSchedule }) => {
   const [isToggleDateBtn, setIsToggleDateBtn] = useState(false);
