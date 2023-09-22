@@ -1,13 +1,15 @@
-import { Drawer, Input, DatePicker, Button } from 'antd';
+import { Drawer, Input, DatePicker } from 'antd';
+import TextArea from 'antd/es/input/TextArea';
 import dayjs from 'dayjs';
 import React, { useState } from 'react';
-import { BiCalendarHeart, BiNote } from 'react-icons/bi';
+import { BiCalendarHeart, BiNote, BiSolidNote } from 'react-icons/bi';
 import { BsArrowUpShort } from 'react-icons/bs';
 import { HiPaperAirplane } from 'react-icons/hi2';
 import styled from 'styled-components';
 
 const ScheduleDrawer = ({ selectDate, selectCategory, onToggleSchedule }) => {
   const [isToggleDateBtn, setIsToggleDateBtn] = useState(false);
+  const [isOpenMemo, setIsOpenMemo] = useState(false);
   const [info, setInfo] = useState({
     title: '',
     memo: '',
@@ -15,6 +17,7 @@ const ScheduleDrawer = ({ selectDate, selectCategory, onToggleSchedule }) => {
     endDate: selectDate,
     category: '',
   });
+
   const onChangeDatePicker = (date, dateString) => {
     // console.log(date, dateString);
     setInfo({ ...info, startDate: date, endDate: date });
@@ -22,8 +25,14 @@ const ScheduleDrawer = ({ selectDate, selectCategory, onToggleSchedule }) => {
   };
   console.log(info);
 
+  const onChangeMemo = (e) => {
+    setInfo({ ...info, memo: e.target.value });
+  };
   const onToggleDateBtn = () => {
     setIsToggleDateBtn((prev) => !prev);
+  };
+  const onToggleMemoBtn = () => {
+    setIsOpenMemo((prev) => !prev);
   };
 
   return (
@@ -34,6 +43,11 @@ const ScheduleDrawer = ({ selectDate, selectCategory, onToggleSchedule }) => {
       open
     >
       <Input placeholder="할 일을 입력하세요." className="title" />
+      {isOpenMemo && (
+        <div className="memoBox">
+          <TextArea rows={4} onChange={onChangeMemo} />
+        </div>
+      )}
       <div className="wrapper">
         <div className="infoWrapper">
           {isToggleDateBtn ? (
@@ -54,9 +68,8 @@ const ScheduleDrawer = ({ selectDate, selectCategory, onToggleSchedule }) => {
               </span>
             </div>
           )}
-
-          <div className="infoMemo">
-            <BiNote />
+          <div className="infoMemo" onClick={onToggleMemoBtn}>
+            {isOpenMemo ? <BiSolidNote /> : <BiNote />}
           </div>
           <div className="infoCategory">{selectCategory.category}</div>
         </div>
@@ -83,6 +96,9 @@ const StyledDrawer = styled(Drawer)`
     @media ${({ theme }) => theme.devices.mobile} {
       font-size: 14px;
     }
+  }
+  .memoBox {
+    margin-bottom: 16px;
   }
   .wrapper {
     display: flex;
