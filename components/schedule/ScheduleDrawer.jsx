@@ -1,6 +1,5 @@
 import { Drawer, Input, DatePicker, Button } from 'antd';
 import dayjs from 'dayjs';
-import { stringify } from 'rc-field-form/es/useWatch';
 import React, { useState } from 'react';
 import { BiCalendarHeart, BiNote } from 'react-icons/bi';
 import { BsArrowUpShort } from 'react-icons/bs';
@@ -12,14 +11,13 @@ const ScheduleDrawer = ({ selectDate, selectCategory, onToggleSchedule }) => {
   const [info, setInfo] = useState({
     title: '',
     memo: '',
-    startDate: selectDate.format('MM월DD일'),
+    startDate: selectDate,
     endDate: selectDate,
     category: '',
   });
   const onChangeDatePicker = (date, dateString) => {
     // console.log(date, dateString);
     setInfo({ ...info, startDate: date, endDate: date });
-    selectDate = date;
     setIsToggleDateBtn(false);
   };
   console.log(info);
@@ -49,7 +47,11 @@ const ScheduleDrawer = ({ selectDate, selectCategory, onToggleSchedule }) => {
           ) : (
             <div className="infoDate" onClick={onToggleDateBtn}>
               <BiCalendarHeart />
-              <span>{selectDate?.format('MM월 DD일 (ddd)')}</span>
+              <span>
+                {info.startDate !== selectDate
+                  ? dayjs(info.startDate).format('MM월 DD일 (ddd)')
+                  : selectDate?.format('MM월 DD일 (ddd)')}
+              </span>
             </div>
           )}
 
