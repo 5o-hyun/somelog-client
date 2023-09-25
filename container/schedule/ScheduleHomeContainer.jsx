@@ -12,6 +12,7 @@ import Category from '@components/schedule/Category';
 import { getCategoryList } from '@lib/api/category';
 import ScheduleDrawer from '@components/schedule/ScheduleDrawer';
 import 'dayjs/locale/ko';
+import useToggle from '@lib/hooks/useToggle';
 
 dayjs.locale('ko');
 
@@ -20,15 +21,15 @@ dayjs.extend(isSameOrBefore);
 dayjs.extend(isSameOrAfter);
 
 const ScheduleHomeContainer = () => {
-  const [isModalOpen, setIsModalOpen] = useState(false);
+  const [isOpenModal, toggleOpenModal] = useToggle(false);
+  const [isOpenCategory, toggleOpenCategory] = useToggle(false);
+  const [isOpenSchedule, toggleOpenSchedule] = useToggle(false);
   const [selectDate, setSelectDate] = useState();
-  const [todaySchedules, setTodaySchedules] = useState([]);
-  const [isToggleCategory, setToggleCategory] = useState(false);
-  const [isOpenSchedule, setIsOpenSchedule] = useState(false);
   const [selectCategory, setSelectCategory] = useState();
+  const [todaySchedules, setTodaySchedules] = useState([]);
 
   const modalClose = () => {
-    setIsModalOpen(false);
+    toggleOpenModal(false);
   };
 
   const onPanelChange = (value, mode) => {
@@ -42,7 +43,7 @@ const ScheduleHomeContainer = () => {
     console.log('선택한 날짜:', date.format('YYYY-MM-DD'));
     setSelectDate(date);
     filterScheduleByDate(date);
-    setIsModalOpen(true);
+    toggleOpenModal(true);
   };
   const filterScheduleByDate = (date) => {
     let filterSchedule = [];
@@ -80,18 +81,10 @@ const ScheduleHomeContainer = () => {
     ));
   };
 
-  const onToggleCategory = () => {
-    setToggleCategory((prev) => !prev);
-  };
-
   const onSelectCategory = (category) => {
     setSelectCategory(category);
-    onToggleSchedule();
-  };
-
-  const onToggleSchedule = () => {
-    isToggleCategory === true && setToggleCategory(false);
-    setIsOpenSchedule((prev) => !prev);
+    toggleOpenCategory();
+    toggleOpenSchedule();
   };
 
   return (
@@ -101,19 +94,19 @@ const ScheduleHomeContainer = () => {
         onPanelChange={onPanelChange}
         handleDateSelect={handleDateSelect}
       />
-      {isModalOpen && (
+      {isOpenModal && (
         <CalenderModal
           selectDate={selectDate}
           todaySchedules={todaySchedules}
           categories={categories}
-          onToggleCategory={onToggleCategory}
+          toggleOpenCategory={toggleOpenCategory}
           modalClose={modalClose}
         />
       )}
-      {isToggleCategory && (
+      {isOpenCategory && (
         <Category
           categories={categories}
-          onToggleCategory={onToggleCategory}
+          toggleOpenCategory={toggleOpenCategory}
           onSelectCategory={onSelectCategory}
         />
       )}
@@ -121,7 +114,7 @@ const ScheduleHomeContainer = () => {
         <ScheduleDrawer
           selectDate={selectDate}
           selectCategory={selectCategory}
-          onToggleSchedule={onToggleSchedule}
+          toggleOpenSchedule={toggleOpenSchedule}
         />
       )}
     </Container>

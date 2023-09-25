@@ -1,13 +1,12 @@
 import React from 'react';
 import styled from 'styled-components';
 import { Button, Modal } from 'antd';
-import dayjs from 'dayjs';
 
 const CalenderModal = ({
   selectDate,
   todaySchedules,
   categories,
-  onToggleCategory,
+  toggleOpenCategory,
   modalClose,
 }) => {
   return (
@@ -33,7 +32,7 @@ const CalenderModal = ({
           );
         })}
       </ul>
-      <StyledButton className="addScheduleButton" onClick={onToggleCategory}>
+      <StyledButton className="addScheduleButton" onClick={toggleOpenCategory}>
         + 할 일을 추가하세요.
       </StyledButton>
     </StyledModal>

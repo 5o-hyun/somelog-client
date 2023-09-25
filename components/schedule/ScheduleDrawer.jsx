@@ -1,4 +1,5 @@
 import { createSchedule } from '@lib/api/schedule';
+import useToggle from '@lib/hooks/useToggle';
 import { Drawer, Input, DatePicker } from 'antd';
 import dayjs from 'dayjs';
 import React, { useState } from 'react';
@@ -10,9 +11,9 @@ import styled from 'styled-components';
 
 const { TextArea } = Input;
 
-const ScheduleDrawer = ({ selectDate, selectCategory, onToggleSchedule }) => {
-  const [isToggleDateBtn, setIsToggleDateBtn] = useState(false);
-  const [isOpenMemo, setIsOpenMemo] = useState(false);
+const ScheduleDrawer = ({ selectDate, selectCategory, toggleOpenSchedule }) => {
+  const [isOpenDateBtn, toggleOpenDateBtn] = useToggle(false);
+  const [isOpenMemo, toggleOpenMemo] = useToggle(false);
   const [info, setInfo] = useState({
     title: '',
     memo: '',
@@ -49,18 +50,12 @@ const ScheduleDrawer = ({ selectDate, selectCategory, onToggleSchedule }) => {
   const onChangeMemo = (e) => {
     setInfo({ ...info, memo: e.target.value });
   };
-  const onToggleDateBtn = () => {
-    setIsToggleDateBtn((prev) => !prev);
-  };
-  const onToggleMemoBtn = () => {
-    setIsOpenMemo((prev) => !prev);
-  };
 
   return (
     <StyledDrawer
       placement="bottom"
       closable={false}
-      onClose={onToggleSchedule}
+      onClose={toggleOpenSchedule}
       open
     >
       <Input
@@ -75,16 +70,16 @@ const ScheduleDrawer = ({ selectDate, selectCategory, onToggleSchedule }) => {
       )}
       <div className="wrapper">
         <div className="infoWrapper">
-          {isToggleDateBtn ? (
+          {isOpenDateBtn ? (
             <div className="infoDate">
-              <div className="icon" onClick={onToggleDateBtn}>
+              <div className="icon" onClick={toggleOpenDateBtn}>
                 <BiCalendarHeart />
                 <BsArrowUpShort />
               </div>
               <DatePicker onChange={onChangeDatePicker} />
             </div>
           ) : (
-            <div className="infoDate" onClick={onToggleDateBtn}>
+            <div className="infoDate" onClick={toggleOpenDateBtn}>
               <BiCalendarHeart />
               <span>
                 {info.startDate !== selectDate
@@ -93,7 +88,7 @@ const ScheduleDrawer = ({ selectDate, selectCategory, onToggleSchedule }) => {
               </span>
             </div>
           )}
-          <div className="infoMemo" onClick={onToggleMemoBtn}>
+          <div className="infoMemo" onClick={toggleOpenMemo}>
             {isOpenMemo ? <BiSolidNote /> : <BiNote />}
           </div>
           <div className="infoCategory">{selectCategory.category}</div>
