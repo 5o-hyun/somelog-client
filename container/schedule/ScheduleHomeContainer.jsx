@@ -13,6 +13,7 @@ import { getCategoryList } from '@lib/api/category';
 import ScheduleDrawer from '@components/schedule/ScheduleDrawer';
 import useToggle from '@lib/hooks/useToggle';
 import 'dayjs/locale/ko';
+import { message } from 'antd';
 
 dayjs.locale('ko');
 
@@ -21,14 +22,15 @@ dayjs.extend(isSameOrBefore);
 dayjs.extend(isSameOrAfter);
 
 const ScheduleHomeContainer = () => {
-  const [isOpenModal, toggleOpenModal] = useToggle(false);
-  const [isOpenCategory, toggleOpenCategory] = useToggle(false);
-  const [isOpenSchedule, toggleOpenSchedule] = useToggle(false);
-  const [isOpenDateBtn, toggleOpenDateBtn] = useToggle(false);
-  const [isOpenMemo, toggleOpenMemo] = useToggle(false);
+  const [isOpenModal, toggleOpenModal] = useToggle();
+  const [isOpenCategory, toggleOpenCategory] = useToggle();
+  const [isOpenSchedule, toggleOpenSchedule] = useToggle();
+  const [isOpenDateBtn, toggleOpenDateBtn] = useToggle();
+  const [isOpenMemo, toggleOpenMemo] = useToggle();
 
   const [selectDate, setSelectDate] = useState();
   const [todaySchedules, setTodaySchedules] = useState([]);
+  const [messageApi, contextHolder] = message.useMessage();
 
   const { data: schedules } = useQuery(['schedules'], getScheduleList);
   const { data: categories } = useQuery(['categories'], getCategoryList);
@@ -85,19 +87,27 @@ const ScheduleHomeContainer = () => {
 
   const createScheduleMutation = useMutation(createSchedule, {
     onSuccess: () => {
-      console.log('성공');
+      successMessage('success', '일정이 등록되었습니다.');
+      toggleOpenSchedule(false);
+      toggleOpenModal(false);
     },
     onError: (error) => {
+      successMessage('error', '일정을 등록할수없습니다.');
       console.error(error);
     },
-    onSettled: () => {
-      console.log('실행중이긴하니');
-    },
   });
+
+  const successMessage = (type, text) => {
+    messageApi.open({
+      type: type,
+      content: text,
+    });
+  };
 
   const onClickConfirm = () => {
     createScheduleMutation.mutate(info);
   };
+
   const onChangeDatePicker = (date, dateString) => {
     // console.log(date, dateString);
     setInfo({ ...info, startDate: date, endDate: date });
@@ -122,40 +132,43 @@ const ScheduleHomeContainer = () => {
   };
 
   return (
-    <Container>
-      <Calender cellRender={cellRender} handleDateSelect={handleDateSelect} />
-      {isOpenModal && (
-        <CalenderModal
-          selectDate={selectDate}
-          todaySchedules={todaySchedules}
-          categories={categories}
-          toggleOpenCategory={toggleOpenCategory}
-          toggleOpenModal={toggleOpenModal}
-        />
-      )}
-      {isOpenCategory && (
-        <Category
-          categories={categories}
-          toggleOpenCategory={toggleOpenCategory}
-          onSelectCategory={onSelectCategory}
-        />
-      )}
-      {isOpenSchedule && (
-        <ScheduleDrawer
-          info={info}
-          selectDate={selectDate}
-          isOpenDateBtn={isOpenDateBtn}
-          isOpenMemo={isOpenMemo}
-          toggleOpenSchedule={toggleOpenSchedule}
-          toggleOpenDateBtn={toggleOpenDateBtn}
-          toggleOpenMemo={toggleOpenMemo}
-          onClickConfirm={onClickConfirm}
-          onChangeDatePicker={onChangeDatePicker}
-          onChangeTitle={onChangeTitle}
-          onChangeMemo={onChangeMemo}
-        />
-      )}
-    </Container>
+    <>
+      {contextHolder}
+      <Container>
+        <Calender cellRender={cellRender} handleDateSelect={handleDateSelect} />
+        {isOpenModal && (
+          <CalenderModal
+            selectDate={selectDate}
+            todaySchedules={todaySchedules}
+            categories={categories}
+            toggleOpenCategory={toggleOpenCategory}
+            toggleOpenModal={toggleOpenModal}
+          />
+        )}
+        {isOpenCategory && (
+          <Category
+            categories={categories}
+            toggleOpenCategory={toggleOpenCategory}
+            onSelectCategory={onSelectCategory}
+          />
+        )}
+        {isOpenSchedule && (
+          <ScheduleDrawer
+            info={info}
+            selectDate={selectDate}
+            isOpenDateBtn={isOpenDateBtn}
+            isOpenMemo={isOpenMemo}
+            toggleOpenSchedule={toggleOpenSchedule}
+            toggleOpenDateBtn={toggleOpenDateBtn}
+            toggleOpenMemo={toggleOpenMemo}
+            onClickConfirm={onClickConfirm}
+            onChangeDatePicker={onChangeDatePicker}
+            onChangeTitle={onChangeTitle}
+            onChangeMemo={onChangeMemo}
+          />
+        )}
+      </Container>
+    </>
   );
 };
 
