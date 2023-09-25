@@ -1,56 +1,26 @@
-import { createSchedule } from '@lib/api/schedule';
-import useToggle from '@lib/hooks/useToggle';
 import { Drawer, Input, DatePicker } from 'antd';
 import dayjs from 'dayjs';
-import React, { useState } from 'react';
+import React from 'react';
 import { BiCalendarHeart, BiNote, BiSolidNote } from 'react-icons/bi';
 import { BsArrowUpShort } from 'react-icons/bs';
 import { HiPaperAirplane } from 'react-icons/hi2';
-import { useMutation } from 'react-query';
 import styled from 'styled-components';
 
 const { TextArea } = Input;
 
-const ScheduleDrawer = ({ selectDate, selectCategory, toggleOpenSchedule }) => {
-  const [isOpenDateBtn, toggleOpenDateBtn] = useToggle(false);
-  const [isOpenMemo, toggleOpenMemo] = useToggle(false);
-  const [info, setInfo] = useState({
-    title: '',
-    memo: '',
-    startDate: selectDate,
-    endDate: selectDate,
-    category: selectCategory.category,
-  });
-
-  const createScheduleMutation = useMutation(createSchedule, {
-    onSuccess: () => {
-      console.log('성공');
-    },
-    onError: (error) => {
-      console.error(error);
-    },
-    onSettled: () => {
-      console.log('실행중이긴하니');
-    },
-  });
-
-  const onClickConfirm = () => {
-    createScheduleMutation.mutate(info);
-  };
-
-  const onChangeDatePicker = (date, dateString) => {
-    // console.log(date, dateString);
-    setInfo({ ...info, startDate: date, endDate: date });
-    setIsToggleDateBtn(false);
-  };
-
-  const onChangeTitle = (e) => {
-    setInfo({ ...info, title: e.target.value });
-  };
-  const onChangeMemo = (e) => {
-    setInfo({ ...info, memo: e.target.value });
-  };
-
+const ScheduleDrawer = ({
+  info,
+  selectDate,
+  isOpenDateBtn,
+  isOpenMemo,
+  toggleOpenSchedule,
+  toggleOpenDateBtn,
+  toggleOpenMemo,
+  onClickConfirm,
+  onChangeDatePicker,
+  onChangeTitle,
+  onChangeMemo,
+}) => {
   return (
     <StyledDrawer
       placement="bottom"
@@ -82,16 +52,16 @@ const ScheduleDrawer = ({ selectDate, selectCategory, toggleOpenSchedule }) => {
             <div className="infoDate" onClick={toggleOpenDateBtn}>
               <BiCalendarHeart />
               <span>
-                {info.startDate !== selectDate
-                  ? dayjs(info.startDate).format('MM월 DD일 (ddd)')
-                  : selectDate?.format('MM월 DD일 (ddd)')}
+                {info.startDate === selectDate
+                  ? selectDate?.format('MM월 DD일 (ddd)')
+                  : dayjs(info.startDate).format('MM월 DD일 (ddd)')}
               </span>
             </div>
           )}
           <div className="infoMemo" onClick={toggleOpenMemo}>
             {isOpenMemo ? <BiSolidNote /> : <BiNote />}
           </div>
-          <div className="infoCategory">{selectCategory.category}</div>
+          <div className="infoCategory">{info.category}</div>
         </div>
         <div className="confirmButton" onClick={onClickConfirm}>
           <HiPaperAirplane />

@@ -7,13 +7,13 @@ const CalenderModal = ({
   todaySchedules,
   categories,
   toggleOpenCategory,
-  modalClose,
+  toggleOpenModal,
 }) => {
   return (
     <StyledModal
       title={selectDate?.format('MM월 DD일 ddd요일')}
       open
-      onCancel={modalClose}
+      onCancel={toggleOpenModal}
     >
       <ul className="scheduleList">
         {todaySchedules.map((schedule) => {

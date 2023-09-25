@@ -2,13 +2,13 @@ import React from 'react';
 import { Badge, Drawer } from 'antd';
 import styled from 'styled-components';
 
-const Category = ({ categories, onToggleCategory, onSelectCategory }) => {
+const Category = ({ categories, toggleOpenCategory, onSelectCategory }) => {
   return (
     <StyledDrawer
       title="카테고리 선택"
       placement="bottom"
       closable={false}
-      onClose={onToggleCategory}
+      onClose={toggleOpenCategory}
       open
     >
       {categories.map((category) => (
