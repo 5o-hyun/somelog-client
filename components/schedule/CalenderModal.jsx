@@ -8,6 +8,7 @@ const CalenderModal = ({
   categories,
   toggleOpenCategory,
   toggleOpenModal,
+  onClickSchedule,
 }) => {
   return (
     <StyledModal
@@ -25,6 +26,7 @@ const CalenderModal = ({
               key={schedule.id}
               className="schedule"
               color={pickCategory ? pickCategory.color : 'black'}
+              onClick={() => onClickSchedule(schedule.id)}
             >
               <p className="category">{schedule.category}</p>
               <p>{schedule.title}</p>
@@ -73,6 +75,7 @@ const StyledButton = styled(Button)`
 `;
 const Schedule = styled.li`
   background-color: ${(props) => props.color};
+  cursor: pointer;
 `;
 
 export default CalenderModal;

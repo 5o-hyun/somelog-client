@@ -31,6 +31,7 @@ const ScheduleDrawer = ({
       <Input
         placeholder="할 일을 입력하세요."
         className="title"
+        value={info?.title}
         onChange={onChangeTitle}
       />
       {isOpenMemo && (

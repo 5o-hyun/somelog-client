@@ -1,8 +1,13 @@
 import Calender from '@components/schedule/Calender';
-import React, { useState } from 'react';
+import React, { useEffect, useState } from 'react';
 import { useMutation, useQuery } from 'react-query';
 import styled from 'styled-components';
-import { createSchedule, getScheduleList } from '@lib/api/schedule';
+import {
+  createSchedule,
+  getSchedule,
+  getScheduleList,
+  updateSchedule,
+} from '@lib/api/schedule';
 import dayjs from 'dayjs';
 import isBetween from 'dayjs/plugin/isBetween';
 import isSameOrBefore from 'dayjs/plugin/isSameOrBefore';
@@ -29,10 +34,14 @@ const ScheduleHomeContainer = () => {
   const [isOpenMemo, toggleOpenMemo] = useToggle();
 
   const [selectDate, setSelectDate] = useState();
+  const [selectScheduleId, setSelectScheduleId] = useState();
   const [todaySchedules, setTodaySchedules] = useState([]);
   const [messageApi, contextHolder] = message.useMessage();
 
   const { data: schedules } = useQuery(['schedules'], getScheduleList);
+  const { data: schedule } = useQuery(['schedule', selectScheduleId], () =>
+    getSchedule(selectScheduleId),
+  );
   const { data: categories } = useQuery(['categories'], getCategoryList);
 
   const handleDateSelect = (date) => {
@@ -97,6 +106,34 @@ const ScheduleHomeContainer = () => {
     },
   });
 
+  const updateScheduleMutation = useMutation(updateSchedule, {
+    onSuccess: () => {
+      successMessage('success', '일정이 수정되었습니다.');
+      toggleOpenSchedule(false);
+      toggleOpenModal(false);
+      setSelectScheduleId(undefined);
+    },
+    onError: (error) => {
+      successMessage('error', '일정을 수정할수없습니다.');
+      console.error(error);
+    },
+  });
+
+  const onClickSchedule = (id) => {
+    setSelectScheduleId(id);
+    toggleOpenSchedule();
+  };
+
+  useEffect(() => {
+    setInfo({
+      title: schedule?.title,
+      memo: schedule?.memo,
+      startDate: schedule?.startDate,
+      endDate: schedule?.endDate,
+      category: schedule?.category,
+    });
+  }, [schedule]);
+
   const successMessage = (type, text) => {
     messageApi.open({
       type: type,
@@ -105,7 +142,9 @@ const ScheduleHomeContainer = () => {
   };
 
   const onClickConfirm = () => {
-    createScheduleMutation.mutate(info);
+    schedule
+      ? updateScheduleMutation.mutate({ id: selectScheduleId, info: info })
+      : createScheduleMutation.mutate(info);
   };
 
   const onChangeDatePicker = (date, dateString) => {
@@ -122,7 +161,8 @@ const ScheduleHomeContainer = () => {
 
   const onSelectCategory = (pickCategory) => {
     setInfo({
-      ...info,
+      title: '',
+      memo: '',
       startDate: selectDate,
       endDate: selectDate,
       category: pickCategory.category,
@@ -143,6 +183,7 @@ const ScheduleHomeContainer = () => {
             categories={categories}
             toggleOpenCategory={toggleOpenCategory}
             toggleOpenModal={toggleOpenModal}
+            onClickSchedule={onClickSchedule}
           />
         )}
         {isOpenCategory && (
