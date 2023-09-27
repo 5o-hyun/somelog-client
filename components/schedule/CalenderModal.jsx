@@ -1,6 +1,7 @@
 import React from 'react';
 import styled from 'styled-components';
 import { Button, Modal } from 'antd';
+import { AiFillDelete } from 'react-icons/ai';
 
 const CalenderModal = ({
   selectDate,
@@ -9,6 +10,7 @@ const CalenderModal = ({
   toggleOpenCategory,
   toggleOpenModal,
   onClickSchedule,
+  onClickDeleteBtn,
 }) => {
   return (
     <StyledModal
@@ -26,10 +28,20 @@ const CalenderModal = ({
               key={schedule.id}
               className="schedule"
               color={pickCategory ? pickCategory.color : 'black'}
-              onClick={() => onClickSchedule(schedule.id)}
             >
-              <p className="category">{schedule.category}</p>
-              <p>{schedule.title}</p>
+              <div
+                className="scheduleContents"
+                onClick={() => onClickSchedule(schedule.id)}
+              >
+                <p>{schedule.category}</p>
+                <p>{schedule.title}</p>
+              </div>
+              <button
+                className="deleteBtn"
+                onClick={() => onClickDeleteBtn(schedule.id)}
+              >
+                <AiFillDelete />
+              </button>
             </Schedule>
           );
         })}
@@ -49,11 +61,14 @@ const StyledModal = styled(Modal)`
     flex-direction: column;
     gap: 8px;
     .schedule {
-      padding: 8px 12px;
       border-radius: 8px;
-      .category {
-        font-size: 12px;
-        color: ${({ theme }) => theme.colors.gray[600]};
+      .scheduleContents {
+        width: 86%;
+        padding: 8px 12px;
+        p:first-child {
+          font-size: 12px;
+          color: ${({ theme }) => theme.colors.gray[600]};
+        }
       }
     }
   }
@@ -76,6 +91,23 @@ const StyledButton = styled(Button)`
 const Schedule = styled.li`
   background-color: ${(props) => props.color};
   cursor: pointer;
+  position: relative;
+  .deleteBtn {
+    width: 30px;
+    height: 30px;
+    border: 1px solid ${({ theme }) => theme.colors.gray[400]};
+    position: absolute;
+    right: 12px;
+    top: 50%;
+    transform: translateY(-50%);
+    border-radius: 8px;
+    color: ${({ theme }) => theme.colors.gray[600]};
+    &:active,
+    &:hover,
+    &:focus {
+      background-color: rgba(153, 154, 147, 0.32);
+    }
+  }
 `;
 
 export default CalenderModal;
