@@ -4,6 +4,7 @@ import { useMutation, useQuery } from 'react-query';
 import styled from 'styled-components';
 import {
   createSchedule,
+  deleteSchedule,
   getSchedule,
   getScheduleList,
   updateSchedule,
@@ -119,6 +120,20 @@ const ScheduleHomeContainer = () => {
     },
   });
 
+  const deleteScheduleMutation = useMutation(deleteSchedule, {
+    onSuccess: () => {
+      successMessage('success', '일정이 삭제되었습니다.');
+    },
+    onError: (error) => {
+      successMessage('error', '존재하지 않는 일정입니다.');
+      console.error(error);
+    },
+  });
+
+  const onClickDeleteBtn = (id) => {
+    deleteScheduleMutation.mutate(id);
+  };
+
   const onClickSchedule = (id) => {
     setSelectScheduleId(id);
     toggleOpenSchedule();
@@ -184,6 +199,7 @@ const ScheduleHomeContainer = () => {
             toggleOpenCategory={toggleOpenCategory}
             toggleOpenModal={toggleOpenModal}
             onClickSchedule={onClickSchedule}
+            onClickDeleteBtn={onClickDeleteBtn}
           />
         )}
         {isOpenCategory && (
