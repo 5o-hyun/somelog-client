@@ -3,11 +3,20 @@ import { normalize } from 'styled-normalize';
 
 export const GlobalStyles = createGlobalStyle`
     ${normalize}
+    
+    @font-face {
+        font-family: 'ACCchildrenheartOTF-Regular';
+        src: url('https://cdn.jsdelivr.net/gh/projectnoonnu/noonfonts_2112-2@1.0/ACCchildrenheartOTF-Regular.woff') format('woff');
+        font-weight: normal;
+        font-style: normal;
+    }
+
     html,
     body {
         background-color: ${({ theme }) => theme.colors.white};
         color:${({ theme }) => theme.colors.textColor};
-        font-family: 'Noto Sans KR', sans-serif;
+        /* font-family: 'Noto Sans KR', sans-serif; */
+        font-family: 'ACCchildrenheartOTF-Regular';
         -webkit-user-select:none;
         -moz-user-select:none;
         -ms-user-select:none;
