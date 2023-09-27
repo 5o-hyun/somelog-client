@@ -67,7 +67,7 @@ const ScheduleHomeContainer = () => {
   };
 
   const cellRender = (current, info) => {
-    let titles = [];
+    let todoLists = [];
     schedules?.forEach((schedule) => {
       const startDate = dayjs(schedule.startDate);
       const endDate = dayjs(schedule.endDate);
@@ -75,16 +75,25 @@ const ScheduleHomeContainer = () => {
         current.isSameOrAfter(startDate, 'day') &&
         current.isSameOrBefore(endDate, 'day')
       ) {
-        titles.push(schedule.title);
+        const color = getColorForCategory(schedule.category);
+        todoLists.push({
+          title: schedule.title,
+          category: schedule.category,
+          color: color,
+        });
       }
     });
 
-    return titles.map((title, index) => (
-      <div key={index}>
-        {title}
-        <br />
-      </div>
+    return todoLists.map((todoList, index) => (
+      <ColorSchedule key={index} color={todoList.color}>
+        {todoList.title}
+      </ColorSchedule>
     ));
+  };
+
+  const getColorForCategory = (categoryName) => {
+    const category = categories?.find((cat) => cat.category === categoryName);
+    return category ? category.color : '#ffffff';
   };
 
   const [info, setInfo] = useState({
@@ -230,5 +239,15 @@ const ScheduleHomeContainer = () => {
 };
 
 const Container = styled.div``;
+const ColorSchedule = styled.div`
+  background-color: ${(props) => props.color};
+  padding: 2px 4px 2px;
+  width: 100%;
+  display: -webkit-box;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  -webkit-box-orient: vertical;
+  -webkit-line-clamp: 1;
+`;
 
 export default ScheduleHomeContainer;

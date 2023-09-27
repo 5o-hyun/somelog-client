@@ -4,18 +4,19 @@ import { Calendar } from 'antd';
 
 const Calender = ({ onPanelChange, handleDateSelect, cellRender }) => {
   return (
-    <>
-      <Container>
-        <Calendar
-          onPanelChange={onPanelChange}
-          onSelect={handleDateSelect}
-          cellRender={cellRender}
-        />
-      </Container>
-    </>
+    <StyledCalendar
+      onPanelChange={onPanelChange}
+      onSelect={handleDateSelect}
+      cellRender={cellRender}
+    />
   );
 };
 
-const Container = styled.div``;
+const StyledCalendar = styled(Calendar)`
+  .ant-picker-cell-inner {
+    padding: 0 !important;
+    margin: 0 2px 0 0 !important;
+  }
+`;
 
 export default Calender;
