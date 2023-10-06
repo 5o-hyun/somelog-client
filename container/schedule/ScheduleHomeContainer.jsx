@@ -20,6 +20,7 @@ import ScheduleDrawer from '@components/schedule/ScheduleDrawer';
 import useToggle from '@lib/hooks/useToggle';
 import 'dayjs/locale/ko';
 import { message } from 'antd';
+import { useRouter } from 'next/router';
 
 dayjs.locale('ko');
 
@@ -39,11 +40,16 @@ const ScheduleHomeContainer = () => {
   const [todaySchedules, setTodaySchedules] = useState([]);
   const [messageApi, contextHolder] = message.useMessage();
 
-  const { data: schedules } = useQuery(['schedules'], getScheduleList);
+  const { data: schedules, refetch: schedulesRefetch } = useQuery(
+    ['schedules'],
+    getScheduleList,
+  );
   const { data: schedule } = useQuery(['schedule', selectScheduleId], () =>
     getSchedule(selectScheduleId),
   );
   const { data: categories } = useQuery(['categories'], getCategoryList);
+
+  const router = useRouter();
 
   const handleDateSelect = (date) => {
     console.log('선택한 날짜:', date.format('YYYY-MM-DD'));
@@ -109,6 +115,7 @@ const ScheduleHomeContainer = () => {
       successMessage('success', '일정이 등록되었습니다.');
       toggleOpenSchedule(false);
       toggleOpenModal(false);
+      schedulesRefetch();
     },
     onError: (error) => {
       successMessage('error', '일정을 등록할수없습니다.');
@@ -122,6 +129,7 @@ const ScheduleHomeContainer = () => {
       toggleOpenSchedule(false);
       toggleOpenModal(false);
       setSelectScheduleId(undefined);
+      schedulesRefetch();
     },
     onError: (error) => {
       successMessage('error', '일정을 수정할수없습니다.');
@@ -132,6 +140,8 @@ const ScheduleHomeContainer = () => {
   const deleteScheduleMutation = useMutation(deleteSchedule, {
     onSuccess: () => {
       successMessage('success', '일정이 삭제되었습니다.');
+      toggleOpenModal(false);
+      schedulesRefetch();
     },
     onError: (error) => {
       successMessage('error', '존재하지 않는 일정입니다.');
