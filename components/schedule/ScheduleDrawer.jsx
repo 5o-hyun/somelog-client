@@ -1,4 +1,4 @@
-import { Drawer, Input, DatePicker } from 'antd';
+import { Drawer, Input, DatePicker, Popover, Badge } from 'antd';
 import dayjs from 'dayjs';
 import React from 'react';
 import { BiCalendarHeart, BiNote, BiSolidNote } from 'react-icons/bi';
@@ -10,6 +10,7 @@ const { TextArea } = Input;
 
 const ScheduleDrawer = ({
   info,
+  categories,
   selectDate,
   isOpenDateBtn,
   isOpenMemo,
@@ -20,7 +21,20 @@ const ScheduleDrawer = ({
   onChangeDatePicker,
   onChangeTitle,
   onChangeMemo,
+  onChangeCategory,
 }) => {
+  const changeCategories = (
+    <div>
+      {categories.map((v) => (
+        <StyledBadge
+          key={v.id}
+          color={v.color}
+          text={v.category}
+          onClick={() => onChangeCategory(v.category)}
+        />
+      ))}
+    </div>
+  );
   return (
     <StyledDrawer
       placement="bottom"
@@ -62,7 +76,17 @@ const ScheduleDrawer = ({
           <div className="infoMemo" onClick={toggleOpenMemo}>
             {isOpenMemo ? <BiSolidNote /> : <BiNote />}
           </div>
-          <div className="infoCategory">{info.category}</div>
+          <div className="infoCategory">
+            <Popover
+              placement="topLeft"
+              title="카테고리 변경"
+              content={changeCategories}
+              trigger="click"
+              className="popover"
+            >
+              {info.category}
+            </Popover>
+          </div>
         </div>
         <div className="confirmButton" onClick={onClickConfirm}>
           <HiPaperAirplane />
@@ -163,6 +187,18 @@ const StyledDrawer = styled(Drawer)`
           height: 20px;
         }
       }
+    }
+  }
+`;
+const StyledBadge = styled(Badge)`
+  margin-right: 8px;
+  cursor: pointer;
+  .ant-badge-status-dot {
+    width: 16px !important;
+    height: 16px !important;
+    @media ${({ theme }) => theme.devices.mobile} {
+      width: 14px !important;
+      height: 14px !important;
     }
   }
 `;

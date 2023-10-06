@@ -182,6 +182,10 @@ const ScheduleHomeContainer = () => {
   const onChangeMemo = (e) => {
     setInfo({ ...info, memo: e.target.value });
   };
+  const onChangeCategory = (value) => {
+    console.log(value);
+    setInfo({ ...info, category: value });
+  };
 
   const onSelectCategory = (pickCategory) => {
     setInfo({
@@ -221,6 +225,7 @@ const ScheduleHomeContainer = () => {
         {isOpenSchedule && (
           <ScheduleDrawer
             info={info}
+            categories={categories}
             selectDate={selectDate}
             isOpenDateBtn={isOpenDateBtn}
             isOpenMemo={isOpenMemo}
@@ -231,6 +236,7 @@ const ScheduleHomeContainer = () => {
             onChangeDatePicker={onChangeDatePicker}
             onChangeTitle={onChangeTitle}
             onChangeMemo={onChangeMemo}
+            onChangeCategory={onChangeCategory}
           />
         )}
       </Container>
