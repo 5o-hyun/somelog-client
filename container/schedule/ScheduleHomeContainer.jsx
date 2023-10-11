@@ -15,12 +15,12 @@ import isSameOrBefore from 'dayjs/plugin/isSameOrBefore';
 import isSameOrAfter from 'dayjs/plugin/isSameOrAfter';
 import CalenderModal from '@components/schedule/CalenderModal';
 import Category from '@components/schedule/Category';
-import { getCategoryList } from '@lib/api/category';
+import { getCategoryList, updateCategory } from '@lib/api/category';
 import ScheduleDrawer from '@components/schedule/ScheduleDrawer';
 import useToggle from '@lib/hooks/useToggle';
 import 'dayjs/locale/ko';
 import { message } from 'antd';
-import { useRouter } from 'next/router';
+import CategoryAlterDrawer from '@components/schedule/CategoryAlterDrawer';
 
 dayjs.locale('ko');
 
@@ -34,10 +34,14 @@ const ScheduleHomeContainer = () => {
   const [isOpenSchedule, toggleOpenSchedule] = useToggle();
   const [isOpenDateBtn, toggleOpenDateBtn] = useToggle();
   const [isOpenMemo, toggleOpenMemo] = useToggle();
+  const [categoryAlterMode, toggleCategoryAlterMode] = useToggle();
+  const [isOpenCategoryAlterDrawer, toggleOpenCategoryAlterDrawer] =
+    useToggle();
 
   const [selectDate, setSelectDate] = useState();
   const [selectScheduleId, setSelectScheduleId] = useState();
   const [todaySchedules, setTodaySchedules] = useState([]);
+  const [categoryAlter, setCategoryAlter] = useState();
   const [messageApi, contextHolder] = message.useMessage();
 
   const { data: schedules, refetch: schedulesRefetch } = useQuery(
@@ -47,9 +51,10 @@ const ScheduleHomeContainer = () => {
   const { data: schedule } = useQuery(['schedule', selectScheduleId], () =>
     getSchedule(selectScheduleId),
   );
-  const { data: categories } = useQuery(['categories'], getCategoryList);
-
-  const router = useRouter();
+  const { data: categories, refetch: categoriesRefetch } = useQuery(
+    ['categories'],
+    getCategoryList,
+  );
 
   const handleDateSelect = (date) => {
     console.log('선택한 날짜:', date.format('YYYY-MM-DD'));
@@ -137,6 +142,20 @@ const ScheduleHomeContainer = () => {
     },
   });
 
+  const updateCategoryMutation = useMutation(updateCategory, {
+    onSuccess: () => {
+      successMessage('success', '카테고리가 수정되었습니다.');
+      schedulesRefetch();
+      categoriesRefetch();
+      toggleOpenCategoryAlterDrawer(false);
+      toggleCategoryAlterMode(false);
+    },
+    onError: (error) => {
+      successMessage('error', '카테고리를 수정할수없습니다.');
+      console.error(error);
+    },
+  });
+
   const deleteScheduleMutation = useMutation(deleteSchedule, {
     onSuccess: () => {
       successMessage('success', '일정이 삭제되었습니다.');
@@ -180,6 +199,12 @@ const ScheduleHomeContainer = () => {
       ? updateScheduleMutation.mutate({ id: selectScheduleId, info: info })
       : createScheduleMutation.mutate(info);
   };
+  const onClickCategoryMutationConfirm = () => {
+    updateCategoryMutation.mutate({
+      id: categoryAlter.id,
+      categoryInfo: categoryAlter,
+    });
+  };
 
   const onChangeDatePicker = (date, dateString) => {
     // console.log(date, dateString);
@@ -192,9 +217,11 @@ const ScheduleHomeContainer = () => {
   const onChangeMemo = (e) => {
     setInfo({ ...info, memo: e.target.value });
   };
-  const onChangeCategory = (value) => {
-    console.log(value);
-    setInfo({ ...info, category: value });
+  const onChangeCategory = (e) => {
+    setInfo({ ...info, category: e.target.value });
+  };
+  const onChangeCategoryAlterInput = (e) => {
+    setCategoryAlter({ ...categoryAlter, category: e.target.value });
   };
 
   const onSelectCategory = (pickCategory) => {
@@ -207,6 +234,11 @@ const ScheduleHomeContainer = () => {
     });
     toggleOpenCategory();
     toggleOpenSchedule();
+  };
+
+  const onAlterCategory = (category) => {
+    setCategoryAlter(category);
+    toggleOpenCategoryAlterDrawer(); // 카테고리 수정 팝업 열기
   };
 
   return (
@@ -229,7 +261,10 @@ const ScheduleHomeContainer = () => {
           <Category
             categories={categories}
             toggleOpenCategory={toggleOpenCategory}
+            toggleCategoryAlterMode={toggleCategoryAlterMode}
+            categoryAlterMode={categoryAlterMode}
             onSelectCategory={onSelectCategory}
+            onAlterCategory={onAlterCategory}
           />
         )}
         {isOpenSchedule && (
@@ -249,6 +284,15 @@ const ScheduleHomeContainer = () => {
             onChangeCategory={onChangeCategory}
           />
         )}
+        {isOpenCategoryAlterDrawer && (
+          <CategoryAlterDrawer
+            categories={categories}
+            categoryAlter={categoryAlter}
+            toggleOpenCategoryAlterDrawer={toggleOpenCategoryAlterDrawer}
+            onChangeCategoryAlterInput={onChangeCategoryAlterInput}
+            onClickCategoryMutationConfirm={onClickCategoryMutationConfirm}
+          />
+        )}
       </Container>
     </>
   );
@@ -256,7 +300,7 @@ const ScheduleHomeContainer = () => {
 
 const Container = styled.div``;
 const ColorSchedule = styled.div`
-  background-color: ${(props) => props.color};
+  background-color: ${(props) => (props.color ? props.color : '#ddd')};
   padding: 2px 4px 2px;
   width: 100%;
   display: -webkit-box;

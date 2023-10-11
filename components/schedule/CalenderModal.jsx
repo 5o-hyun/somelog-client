@@ -27,7 +27,7 @@ const CalenderModal = ({
             <Schedule
               key={schedule.id}
               className="schedule"
-              color={pickCategory ? pickCategory.color : 'black'}
+              color={pickCategory ? pickCategory.color : '#ddd'}
             >
               <div
                 className="scheduleContents"
