@@ -19,8 +19,8 @@ import { getCategoryList, updateCategory } from '@lib/api/category';
 import ScheduleDrawer from '@components/schedule/ScheduleDrawer';
 import useToggle from '@lib/hooks/useToggle';
 import 'dayjs/locale/ko';
-import { message } from 'antd';
 import CategoryAlterDrawer from '@components/schedule/CategoryAlterDrawer';
+import { useMessage } from '@components/base/MessageProvider';
 
 dayjs.locale('ko');
 
@@ -42,7 +42,8 @@ const ScheduleHomeContainer = () => {
   const [selectScheduleId, setSelectScheduleId] = useState();
   const [todaySchedules, setTodaySchedules] = useState([]);
   const [categoryAlter, setCategoryAlter] = useState();
-  const [messageApi, contextHolder] = message.useMessage();
+
+  const showMessage = useMessage();
 
   const { data: schedules, refetch: schedulesRefetch } = useQuery(
     ['schedules'],
@@ -117,53 +118,53 @@ const ScheduleHomeContainer = () => {
 
   const createScheduleMutation = useMutation(createSchedule, {
     onSuccess: () => {
-      successMessage('success', '일정이 등록되었습니다.');
+      showMessage('success', '일정이 등록되었습니다.');
       toggleOpenSchedule(false);
       toggleOpenModal(false);
       schedulesRefetch();
     },
     onError: (error) => {
-      successMessage('error', '일정을 등록할수없습니다.');
+      showMessage('error', '일정을 등록할수없습니다.');
       console.error(error);
     },
   });
 
   const updateScheduleMutation = useMutation(updateSchedule, {
     onSuccess: () => {
-      successMessage('success', '일정이 수정되었습니다.');
+      showMessage('success', '일정이 수정되었습니다.');
       toggleOpenSchedule(false);
       toggleOpenModal(false);
       setSelectScheduleId(undefined);
       schedulesRefetch();
     },
     onError: (error) => {
-      successMessage('error', '일정을 수정할수없습니다.');
+      showMessage('error', '일정을 수정할수없습니다.');
       console.error(error);
     },
   });
 
   const updateCategoryMutation = useMutation(updateCategory, {
     onSuccess: () => {
-      successMessage('success', '카테고리가 수정되었습니다.');
+      showMessage('success', '카테고리가 수정되었습니다.');
       schedulesRefetch();
       categoriesRefetch();
       toggleOpenCategoryAlterDrawer(false);
       toggleCategoryAlterMode(false);
     },
     onError: (error) => {
-      successMessage('error', '카테고리를 수정할수없습니다.');
+      showMessage('error', '카테고리를 수정할수없습니다.');
       console.error(error);
     },
   });
 
   const deleteScheduleMutation = useMutation(deleteSchedule, {
     onSuccess: () => {
-      successMessage('success', '일정이 삭제되었습니다.');
+      showMessage('success', '일정이 삭제되었습니다.');
       toggleOpenModal(false);
       schedulesRefetch();
     },
     onError: (error) => {
-      successMessage('error', '존재하지 않는 일정입니다.');
+      showMessage('error', '존재하지 않는 일정입니다.');
       console.error(error);
     },
   });
@@ -186,13 +187,6 @@ const ScheduleHomeContainer = () => {
       category: schedule?.category,
     });
   }, [schedule]);
-
-  const successMessage = (type, text) => {
-    messageApi.open({
-      type: type,
-      content: text,
-    });
-  };
 
   const onClickConfirm = () => {
     schedule
@@ -242,59 +236,56 @@ const ScheduleHomeContainer = () => {
   };
 
   return (
-    <>
-      {contextHolder}
-      <Container>
-        <Calender cellRender={cellRender} handleDateSelect={handleDateSelect} />
-        {isOpenModal && (
-          <CalenderModal
-            selectDate={selectDate}
-            todaySchedules={todaySchedules}
-            categories={categories}
-            toggleOpenCategory={toggleOpenCategory}
-            toggleOpenModal={toggleOpenModal}
-            onClickSchedule={onClickSchedule}
-            onClickDeleteBtn={onClickDeleteBtn}
-          />
-        )}
-        {isOpenCategory && (
-          <Category
-            categories={categories}
-            toggleOpenCategory={toggleOpenCategory}
-            toggleCategoryAlterMode={toggleCategoryAlterMode}
-            categoryAlterMode={categoryAlterMode}
-            onSelectCategory={onSelectCategory}
-            onAlterCategory={onAlterCategory}
-          />
-        )}
-        {isOpenSchedule && (
-          <ScheduleDrawer
-            info={info}
-            categories={categories}
-            selectDate={selectDate}
-            isOpenDateBtn={isOpenDateBtn}
-            isOpenMemo={isOpenMemo}
-            toggleOpenSchedule={toggleOpenSchedule}
-            toggleOpenDateBtn={toggleOpenDateBtn}
-            toggleOpenMemo={toggleOpenMemo}
-            onClickConfirm={onClickConfirm}
-            onChangeDatePicker={onChangeDatePicker}
-            onChangeTitle={onChangeTitle}
-            onChangeMemo={onChangeMemo}
-            onChangeCategory={onChangeCategory}
-          />
-        )}
-        {isOpenCategoryAlterDrawer && (
-          <CategoryAlterDrawer
-            categories={categories}
-            categoryAlter={categoryAlter}
-            toggleOpenCategoryAlterDrawer={toggleOpenCategoryAlterDrawer}
-            onChangeCategoryAlterInput={onChangeCategoryAlterInput}
-            onClickCategoryMutationConfirm={onClickCategoryMutationConfirm}
-          />
-        )}
-      </Container>
-    </>
+    <Container>
+      <Calender cellRender={cellRender} handleDateSelect={handleDateSelect} />
+      {isOpenModal && (
+        <CalenderModal
+          selectDate={selectDate}
+          todaySchedules={todaySchedules}
+          categories={categories}
+          toggleOpenCategory={toggleOpenCategory}
+          toggleOpenModal={toggleOpenModal}
+          onClickSchedule={onClickSchedule}
+          onClickDeleteBtn={onClickDeleteBtn}
+        />
+      )}
+      {isOpenCategory && (
+        <Category
+          categories={categories}
+          toggleOpenCategory={toggleOpenCategory}
+          toggleCategoryAlterMode={toggleCategoryAlterMode}
+          categoryAlterMode={categoryAlterMode}
+          onSelectCategory={onSelectCategory}
+          onAlterCategory={onAlterCategory}
+        />
+      )}
+      {isOpenSchedule && (
+        <ScheduleDrawer
+          info={info}
+          categories={categories}
+          selectDate={selectDate}
+          isOpenDateBtn={isOpenDateBtn}
+          isOpenMemo={isOpenMemo}
+          toggleOpenSchedule={toggleOpenSchedule}
+          toggleOpenDateBtn={toggleOpenDateBtn}
+          toggleOpenMemo={toggleOpenMemo}
+          onClickConfirm={onClickConfirm}
+          onChangeDatePicker={onChangeDatePicker}
+          onChangeTitle={onChangeTitle}
+          onChangeMemo={onChangeMemo}
+          onChangeCategory={onChangeCategory}
+        />
+      )}
+      {isOpenCategoryAlterDrawer && (
+        <CategoryAlterDrawer
+          categories={categories}
+          categoryAlter={categoryAlter}
+          toggleOpenCategoryAlterDrawer={toggleOpenCategoryAlterDrawer}
+          onChangeCategoryAlterInput={onChangeCategoryAlterInput}
+          onClickCategoryMutationConfirm={onClickCategoryMutationConfirm}
+        />
+      )}
+    </Container>
   );
 };
 
