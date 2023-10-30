@@ -1,15 +1,19 @@
 import { Button, Drawer } from 'antd';
-import React from 'react';
+import React, { useState } from 'react';
 import styled from 'styled-components';
 import { AiOutlineCheckCircle, AiOutlineDelete } from 'react-icons/ai';
 
 const CategoryAlterDrawer = ({
   categories,
   categoryAlter,
+  categoryAlterButtonActive,
   toggleOpenCategoryAlterDrawer,
   onChangeCategoryAlterInput,
   onClickCategoryMutationConfirm,
+  onChangeCategoryColor,
 }) => {
+  console.log(categoryAlterButtonActive);
+
   return (
     <>
       <StyledDrawer
@@ -30,9 +34,17 @@ const CategoryAlterDrawer = ({
           />
         </div>
         <div className="categoryColorWrapper">
-          {categories.map((category) => (
-            <StyledDot key={category.id} color={category.color}>
-              {categoryAlter?.id === category.id && <AiOutlineCheckCircle />}
+          {categories.map((category, index) => (
+            <StyledDot
+              key={category.id}
+              color={category.color}
+              onClick={() => onChangeCategoryColor(category.color, index)}
+            >
+              {(categoryAlter?.id === category.id ||
+                categoryAlterButtonActive === index) && (
+                <AiOutlineCheckCircle />
+              )}
+              {/* {categoryAlterButtonActive === index && <AiOutlineCheckCircle />} */}
             </StyledDot>
           ))}
         </div>

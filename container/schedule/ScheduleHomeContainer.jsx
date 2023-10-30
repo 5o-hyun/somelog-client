@@ -15,7 +15,11 @@ import isSameOrBefore from 'dayjs/plugin/isSameOrBefore';
 import isSameOrAfter from 'dayjs/plugin/isSameOrAfter';
 import CalenderModal from '@components/schedule/CalenderModal';
 import Category from '@components/schedule/Category';
-import { getCategoryList, updateCategory } from '@lib/api/category';
+import {
+  createCategory,
+  getCategoryList,
+  updateCategory,
+} from '@lib/api/category';
 import ScheduleDrawer from '@components/schedule/ScheduleDrawer';
 import useToggle from '@lib/hooks/useToggle';
 import 'dayjs/locale/ko';
@@ -42,6 +46,7 @@ const ScheduleHomeContainer = () => {
   const [selectScheduleId, setSelectScheduleId] = useState();
   const [todaySchedules, setTodaySchedules] = useState([]);
   const [categoryAlter, setCategoryAlter] = useState();
+  const [categoryAlterButtonActive, setCategoryAlterButtonActive] = useState(0);
 
   const showMessage = useMessage();
 
@@ -126,6 +131,16 @@ const ScheduleHomeContainer = () => {
     onError: (error) => {
       showMessage('error', '일정을 등록할수없습니다.');
       console.error(error);
+    },
+  });
+
+  const createCategoryMutation = useMutation(createCategory, {
+    onSuccess: () => {
+      showMessage('success', '카테고리가 등록되었습니다.');
+      categoriesRefetch();
+    },
+    onError: (error) => {
+      showMessage('error', '카테고리를 등록할수없습니다.');
     },
   });
 
@@ -217,6 +232,10 @@ const ScheduleHomeContainer = () => {
   const onChangeCategoryAlterInput = (e) => {
     setCategoryAlter({ ...categoryAlter, category: e.target.value });
   };
+  const onChangeCategoryColor = (color, index) => {
+    setCategoryAlter({ ...categoryAlter, color: color });
+    setCategoryAlterButtonActive(index);
+  };
 
   const onSelectCategory = (pickCategory) => {
     setInfo({
@@ -280,9 +299,11 @@ const ScheduleHomeContainer = () => {
         <CategoryAlterDrawer
           categories={categories}
           categoryAlter={categoryAlter}
+          categoryAlterButtonActive={categoryAlterButtonActive}
           toggleOpenCategoryAlterDrawer={toggleOpenCategoryAlterDrawer}
           onChangeCategoryAlterInput={onChangeCategoryAlterInput}
           onClickCategoryMutationConfirm={onClickCategoryMutationConfirm}
+          onChangeCategoryColor={onChangeCategoryColor}
         />
       )}
     </Container>
