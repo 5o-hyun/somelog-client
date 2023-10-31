@@ -5,9 +5,14 @@ export const GlobalStyles = createGlobalStyle`
     ${reset}
     html,
     body {
-        background-color: ${({ theme }) => theme.colors.backgroundColor};
+        @font-face {
+            font-family: 'ACCchildrenheartOTF-Regular';
+            src: url('https://cdn.jsdelivr.net/gh/projectnoonnu/noonfonts_2112-2@1.0/ACCchildrenheartOTF-Regular.woff') format('woff');
+            font-weight: normal;
+            font-style: normal;
+        }
         color:${({ theme }) => theme.colors.textColor};
-        font-family: 'Noto Sans KR', sans-serif;
+        font-family: 'ACCchildrenheartOTF-Regular';
         -webkit-user-select:none;
         -moz-user-select:none;
         -ms-user-select:none;
@@ -30,7 +35,7 @@ export const GlobalStyles = createGlobalStyle`
         box-sizing: border-box;
     }
     pre {
-        font-family: 'Noto Sans KR',sans-serif;
+       font-family: 'ACCchildrenheartOTF-Regular';
     }
     h1,h2,h3,h4,h5,h6,p{
         margin:0;
