@@ -1,17 +1,33 @@
 import { Schedules } from '@/types/schedule';
+import Category from '@components/schedule/Category';
 import { EventContentArg } from '@fullcalendar/core';
 import dayGridPlugin from '@fullcalendar/daygrid';
 import FullCalendar from '@fullcalendar/react';
 import { getScheduleList } from '@lib/api/schedule';
+import useToggle from '@lib/hooks/useToggle';
 import React from 'react';
 import { useQuery } from 'react-query';
 import styled from 'styled-components';
+import interactionPlugin from '@fullcalendar/interaction';
+import { getCategoryList } from '@lib/api/category';
+import { Categories } from '@/types/category';
 
 const ScheduleContainer = () => {
   const { data: schedules } = useQuery<Schedules>(
     ['schedules'],
     getScheduleList,
   );
+  const { data: categories } = useQuery<Categories>(
+    'categories',
+    getCategoryList,
+  );
+
+  const [isOpenCategory, toggleCategory] = useToggle();
+
+  const onClickEmptyCell = () => {
+    toggleCategory();
+  };
+
   const renderEventContent = (eventInfo: EventContentArg) => {
     return (
       <>
@@ -23,7 +39,7 @@ const ScheduleContainer = () => {
   return (
     <Container>
       <FullCalendar
-        plugins={[dayGridPlugin]}
+        plugins={[dayGridPlugin, interactionPlugin]}
         initialView="dayGridMonth"
         locale="ko"
         headerToolbar={{
@@ -41,7 +57,12 @@ const ScheduleContainer = () => {
           end: schedule.endDate,
         }))}
         eventContent={renderEventContent}
+        dateClick={onClickEmptyCell}
       />
+
+      {isOpenCategory && (
+        <Category categories={categories} onClose={toggleCategory} />
+      )}
     </Container>
   );
 };

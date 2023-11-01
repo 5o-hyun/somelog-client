@@ -50,4 +50,8 @@ export const GlobalStyles = createGlobalStyle`
         height: 100%;
         object-fit: cover;
     }
+    :where(.css-dev-only-do-not-override-50eunn).ant-drawer-bottom>.ant-drawer-content-wrapper{
+        box-shadow: none;
+        height:auto !important;
+    }
 `;
