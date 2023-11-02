@@ -62,13 +62,15 @@ const ScheduleContainer = () => {
   };
 
   const renderEventContent = (eventInfo: EventContentArg) => {
+    console.log(eventInfo);
     return (
-      <>
+      <ScheduleBox color={eventInfo.backgroundColor}>
         <p>{eventInfo.event.title}</p>
-      </>
+      </ScheduleBox>
     );
   };
 
+  // 스케줄
   const deleteScheduleMutation = useMutation(deleteSchedule, {
     onSuccess: () => {
       message.success('일정이 삭제되었습니다.');
@@ -79,7 +81,7 @@ const ScheduleContainer = () => {
       console.log('존재하지 않는 일정입니다.');
     },
   });
-  // 스케줄
+
   const onDeleteSchedule = (id: number) => {
     deleteScheduleMutation.mutate(id);
   };
@@ -98,12 +100,20 @@ const ScheduleContainer = () => {
         contentHeight="auto"
         eventOverlap={false}
         slotEventOverlap={false}
-        events={schedules?.map((schedule) => ({
-          id: schedule.id.toString(),
-          title: schedule.title,
-          start: schedule.startDate,
-          end: schedule.endDate,
-        }))}
+        eventColor="green"
+        events={schedules?.map((schedule) => {
+          const pickCategory = categories?.find(
+            (v) => v.category === schedule.category,
+          );
+
+          return {
+            id: schedule.id.toString(),
+            title: schedule.title,
+            start: schedule.startDate,
+            end: schedule.endDate,
+            backgroundColor: pickCategory?.color,
+          };
+        })}
         eventContent={renderEventContent}
         dateClick={onClickEmptyCell}
         eventClick={onClickDataCell}
@@ -113,6 +123,7 @@ const ScheduleContainer = () => {
         <Schedule
           date={selectDate}
           todaySchedules={todaySchedules}
+          categories={categories}
           onClose={toggleSchedule}
           onClickAdd={toggleCategory}
           onDelete={onDeleteSchedule}
@@ -135,6 +146,31 @@ const Container = styled.div`
       background-color: ${({ theme }) => theme.colors.primaryColor} !important;
       box-shadow: none !important;
     }
+  }
+  .fc-event {
+    background-color: transparent;
+  }
+`;
+const ScheduleBox = styled.div`
+  width: 100%;
+  padding: 6px 0;
+  border-radius: 4px;
+  background-color: ${(props) => props.color};
+  cursor: pointer;
+  &:hover,
+  &:active,
+  &:focus {
+    box-shadow: none;
+  }
+  p {
+    width: 100%;
+    padding-left: 2px;
+    box-sizing: border-box;
+    display: -webkit-box;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    -webkit-box-orient: vertical;
+    -webkit-line-clamp: 1;
   }
 `;
 
