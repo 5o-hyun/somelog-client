@@ -1,18 +1,22 @@
-import { Schedules } from '@/types/schedule';
-import Category from '@components/schedule/Category';
-import { EventContentArg } from '@fullcalendar/core';
-import dayGridPlugin from '@fullcalendar/daygrid';
-import FullCalendar from '@fullcalendar/react';
+import { getCategoryList } from '@lib/api/category';
 import { getScheduleList } from '@lib/api/schedule';
 import useToggle from '@lib/hooks/useToggle';
+
+import { Categories } from '@typess/category';
+import { Schedules } from '@typess/schedule';
+
+import Category from '@components/schedule/Category';
+import Schedule from '@components/schedule/Schedule';
+
+import { EventContentArg } from '@fullcalendar/core';
+import dayGridPlugin from '@fullcalendar/daygrid';
+import interactionPlugin from '@fullcalendar/interaction';
+import FullCalendar from '@fullcalendar/react';
+
+import dayjs from 'dayjs';
 import React, { useState } from 'react';
 import { useQuery } from 'react-query';
 import styled from 'styled-components';
-import interactionPlugin from '@fullcalendar/interaction';
-import { getCategoryList } from '@lib/api/category';
-import { Categories } from '@/types/category';
-import Schedule from '@components/schedule/Schedule';
-import dayjs from 'dayjs';
 
 const ScheduleContainer = () => {
   const { data: schedules } = useQuery<Schedules>(

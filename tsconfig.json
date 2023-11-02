@@ -16,8 +16,8 @@
     "incremental": true,
     "baseUrl": ".",
     "paths": {
-      "@modules/*": ["modules/*"],
       "@lib/*": ["lib/*"],
+      "@typess/*": ["typess/*"],
       "@pages/*": ["pages/*"],
       "@container/*": ["container/*"],
       "@components/*": ["components/*"],

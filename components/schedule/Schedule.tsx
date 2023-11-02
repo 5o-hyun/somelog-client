@@ -1,4 +1,5 @@
-import { Schedules } from '@/types/schedule';
+import { Schedules } from '@typess/schedule';
+
 import { Modal } from 'antd';
 import dayjs from 'dayjs';
 import React from 'react';

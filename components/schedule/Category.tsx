@@ -1,4 +1,5 @@
-import { Categories } from '@/types/category';
+import { Categories } from '@typess/category';
+
 import { Badge, Drawer } from 'antd';
 import React from 'react';
 import { BsFillPlusCircleFill } from 'react-icons/bs';
