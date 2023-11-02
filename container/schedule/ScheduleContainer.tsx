@@ -1,5 +1,9 @@
 import { getCategoryList } from '@lib/api/category';
-import { deleteSchedule, getScheduleList } from '@lib/api/schedule';
+import {
+  createSchedule,
+  deleteSchedule,
+  getScheduleList,
+} from '@lib/api/schedule';
 import useToggle from '@lib/hooks/useToggle';
 
 import { Categories } from '@typess/category';
@@ -7,6 +11,7 @@ import { Schedules } from '@typess/schedule';
 
 import Category from '@components/schedule/Category';
 import Schedule from '@components/schedule/Schedule';
+import ScheduleUpsert from '@components/schedule/ScheduleUpsert';
 
 import { EventContentArg } from '@fullcalendar/core';
 import dayGridPlugin from '@fullcalendar/daygrid';
@@ -16,6 +21,7 @@ import FullCalendar from '@fullcalendar/react';
 import { message } from 'antd';
 import dayjs from 'dayjs';
 import React, { useState } from 'react';
+import { useEffect } from 'react';
 import { useMutation, useQuery } from 'react-query';
 import styled from 'styled-components';
 
@@ -31,6 +37,7 @@ const ScheduleContainer = () => {
 
   const [isOpenSchedule, toggleSchedule] = useToggle();
   const [isOpenCategory, toggleCategory] = useToggle();
+  const [isOpenUpsert, toggleUpsert] = useToggle();
 
   const [selectDate, setSelectDate] = useState();
   const [todaySchedules, setTodaySchedules] = useState<Schedules>([]);
@@ -53,16 +60,18 @@ const ScheduleContainer = () => {
 
   const onClickEmptyCell = (info: any) => {
     filterScheduleByDate(dayjs(info.date));
+    onChangeUpsertInfo('startDate', dayjs(info.date));
+    onChangeUpsertInfo('endDate', dayjs(info.date));
     toggleSchedule();
   };
-
   const onClickDataCell = (info: any) => {
     filterScheduleByDate(dayjs(info.event.start));
+    onChangeUpsertInfo('startDate', dayjs(info.date));
+    onChangeUpsertInfo('endDate', dayjs(info.date));
     toggleSchedule();
   };
 
   const renderEventContent = (eventInfo: EventContentArg) => {
-    console.log(eventInfo);
     return (
       <ScheduleBox color={eventInfo.backgroundColor}>
         <p>{eventInfo.event.title}</p>
@@ -78,12 +87,70 @@ const ScheduleContainer = () => {
       toggleSchedule();
     },
     onError: () => {
-      console.log('존재하지 않는 일정입니다.');
+      message.error('존재하지 않는 일정입니다.');
+    },
+  });
+  const onDeleteSchedule = (id: number) => {
+    deleteScheduleMutation.mutate(id);
+  };
+
+  // 스케줄 등록
+  const [upsertInfo, setUpsertInfo] = useState<{
+    id: number | null;
+    title?: string;
+    memo?: string;
+    startDate?: string;
+    endDate?: string;
+    category?: string;
+  }>({
+    id: null,
+    title: undefined,
+    memo: undefined,
+    startDate: undefined,
+    endDate: undefined,
+    category: undefined,
+  });
+
+  const onChangeUpsertInfo = (key: string, value: any) => {
+    setUpsertInfo((prevUpsertInfo) => ({
+      ...prevUpsertInfo,
+      [key]: value,
+    }));
+  };
+
+  const onClickCategory = (value: string) => {
+    onChangeUpsertInfo('category', value);
+    toggleCategory();
+    toggleUpsert();
+  };
+  console.log(upsertInfo);
+
+  const createScheduleMutation = useMutation(createSchedule, {
+    onSuccess: () => {
+      message.success('일정이 등록되었습니다.');
+      refetchSchedules();
+      toggleUpsert();
+      toggleSchedule();
+    },
+    onError: () => {
+      message.error('일정을 등록할수없습니다.');
     },
   });
 
-  const onDeleteSchedule = (id: number) => {
-    deleteScheduleMutation.mutate(id);
+  const onConfirm = () => {
+    if (!upsertInfo.title) {
+      message.error('제목을 입력해주세요.');
+    }
+    if (!upsertInfo.category) {
+      message.error('카테고리를 입력해주세요.');
+    }
+    if (!upsertInfo.startDate) {
+      message.error('시작 날짜를 입력해주세요.');
+    }
+    if (!upsertInfo.endDate) {
+      message.error('종료 날짜를 입력해주세요.');
+    }
+    createScheduleMutation.mutate(upsertInfo as any);
   };
 
   return (
@@ -130,7 +197,19 @@ const ScheduleContainer = () => {
         />
       )}
       {isOpenCategory && (
-        <Category categories={categories} onClose={toggleCategory} />
+        <Category
+          categories={categories}
+          onClick={onClickCategory}
+          onClose={toggleCategory}
+        />
+      )}
+      {isOpenUpsert && (
+        <ScheduleUpsert
+          upsertInfo={upsertInfo}
+          onClose={toggleUpsert}
+          onChange={onChangeUpsertInfo}
+          onConfirm={onConfirm}
+        />
       )}
     </Container>
   );

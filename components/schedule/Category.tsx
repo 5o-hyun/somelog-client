@@ -7,10 +7,15 @@ import styled from 'styled-components';
 
 interface CategoryProps {
   categories?: Categories;
+  onClick: (value: string) => void;
   onClose: () => void;
 }
 
-const Category: React.FC<CategoryProps> = ({ categories, onClose }) => {
+const Category: React.FC<CategoryProps> = ({
+  categories,
+  onClick,
+  onClose,
+}) => {
   return (
     <StyledDrawer
       title="카테고리 선택"
@@ -24,8 +29,11 @@ const Category: React.FC<CategoryProps> = ({ categories, onClose }) => {
           key={category.id}
           color={category.color}
           text={category.category}
+          //@ts-ignore
+          onClick={() => onClick(category.category)}
         />
       ))}
+      <Badge></Badge>
     </StyledDrawer>
   );
 };

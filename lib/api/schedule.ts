@@ -6,6 +6,17 @@ export const getScheduleList = async () => {
   return data;
 };
 
+// 일정 등록
+export const createSchedule = async (data: {
+  title: string;
+  memo: string;
+  startDate: string;
+  endDate: string;
+  category: string;
+}) => {
+  await defaultAxios.post(`/schedule`, data);
+};
+
 // 일정 삭제
 export const deleteSchedule = async (id: number) => {
   await defaultAxios.delete(`/schedule/${id}`);
