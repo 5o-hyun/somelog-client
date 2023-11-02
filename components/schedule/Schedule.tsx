@@ -1,5 +1,7 @@
 import { Schedules } from '@typess/schedule';
 
+import { DeleteOutlined } from '@ant-design/icons';
+
 import { Modal } from 'antd';
 import dayjs from 'dayjs';
 import React from 'react';
@@ -9,12 +11,16 @@ interface ScheduleProps {
   date: any;
   todaySchedules: Schedules;
   onClose: () => void;
+  onClickAdd: () => void;
+  onDelete: (id: number) => void;
 }
 
 const Schedule: React.FC<ScheduleProps> = ({
   date,
   todaySchedules,
   onClose,
+  onClickAdd,
+  onDelete,
 }) => {
   return (
     <StyledModal
@@ -27,10 +33,15 @@ const Schedule: React.FC<ScheduleProps> = ({
           <div key={v.id} className="schedule">
             <p className="category">{v.category}</p>
             <p className="title">{v.title}</p>
+            <div className="deleteBtn" onClick={() => onDelete(v.id)}>
+              <DeleteOutlined />
+            </div>
           </div>
         ))}
       </div>
-      <button className="addBtn">+ 추가</button>
+      <button className="addBtn" onClick={onClickAdd}>
+        + 추가
+      </button>
     </StyledModal>
   );
 };
@@ -49,9 +60,32 @@ const StyledModal = styled(Modal)`
         padding: 8px 16px;
         box-sizing: border-box;
         border-radius: 8px;
+        position: relative;
         cursor: pointer;
         .title {
           font-size: 16px;
+        }
+        .deleteBtn {
+          position: absolute;
+          top: 50%;
+          right: 20px;
+          transform: translateY(-50%);
+          border: 1px solid ${({ theme }) => theme.colors.gray[400]};
+          border-radius: 8px;
+          display: grid;
+          place-items: center;
+          width: 30px;
+          height: 30px;
+          &:hover,
+          &:active,
+          &:focus {
+            background-color: ${({ theme }) => theme.colors.gray[300]};
+          }
+          svg {
+            width: 100%;
+            height: 100%;
+            color: ${({ theme }) => theme.colors.gray[500]};
+          }
         }
       }
     }

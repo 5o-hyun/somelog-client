@@ -5,3 +5,8 @@ export const getScheduleList = async () => {
   const { data } = await defaultAxios.get(`/schedules`);
   return data;
 };
+
+// 일정 삭제
+export const deleteSchedule = async (id: number) => {
+  await defaultAxios.delete(`/schedule/${id}`);
+};

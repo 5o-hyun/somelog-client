@@ -1,5 +1,5 @@
 import { getCategoryList } from '@lib/api/category';
-import { getScheduleList } from '@lib/api/schedule';
+import { deleteSchedule, getScheduleList } from '@lib/api/schedule';
 import useToggle from '@lib/hooks/useToggle';
 
 import { Categories } from '@typess/category';
@@ -13,13 +13,14 @@ import dayGridPlugin from '@fullcalendar/daygrid';
 import interactionPlugin from '@fullcalendar/interaction';
 import FullCalendar from '@fullcalendar/react';
 
+import { message } from 'antd';
 import dayjs from 'dayjs';
 import React, { useState } from 'react';
-import { useQuery } from 'react-query';
+import { useMutation, useQuery } from 'react-query';
 import styled from 'styled-components';
 
 const ScheduleContainer = () => {
-  const { data: schedules } = useQuery<Schedules>(
+  const { data: schedules, refetch: refetchSchedules } = useQuery<Schedules>(
     ['schedules'],
     getScheduleList,
   );
@@ -34,6 +35,7 @@ const ScheduleContainer = () => {
   const [selectDate, setSelectDate] = useState();
   const [todaySchedules, setTodaySchedules] = useState<Schedules>([]);
 
+  // 캘린더
   const filterScheduleByDate = (date: any) => {
     let filterSchedule: Schedules = [];
     schedules?.map((schedule) => {
@@ -67,6 +69,21 @@ const ScheduleContainer = () => {
     );
   };
 
+  const deleteScheduleMutation = useMutation(deleteSchedule, {
+    onSuccess: () => {
+      message.success('일정이 삭제되었습니다.');
+      refetchSchedules();
+      toggleSchedule();
+    },
+    onError: () => {
+      console.log('존재하지 않는 일정입니다.');
+    },
+  });
+  // 스케줄
+  const onDeleteSchedule = (id: number) => {
+    deleteScheduleMutation.mutate(id);
+  };
+
   return (
     <Container>
       <FullCalendar
@@ -97,11 +114,13 @@ const ScheduleContainer = () => {
           date={selectDate}
           todaySchedules={todaySchedules}
           onClose={toggleSchedule}
+          onClickAdd={toggleCategory}
+          onDelete={onDeleteSchedule}
         />
       )}
-      {/* {isOpenCategory && (
+      {isOpenCategory && (
         <Category categories={categories} onClose={toggleCategory} />
-      )} */}
+      )}
     </Container>
   );
 };
