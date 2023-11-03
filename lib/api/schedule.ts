@@ -23,6 +23,24 @@ export const createSchedule = async (data: {
   await defaultAxios.post(`/schedule`, data);
 };
 
+// 일정 수정
+export const updateSchedule = async (data: {
+  id: number;
+  title: string;
+  memo: string;
+  startDate: string;
+  endDate: string;
+  category: string;
+}) => {
+  await defaultAxios.put(`/schedule/${data.id}`, {
+    title: data.title,
+    memo: data.memo,
+    startDate: data.startDate,
+    endDate: data.endDate,
+    category: data.category,
+  });
+};
+
 // 일정 삭제
 export const deleteSchedule = async (id: number) => {
   await defaultAxios.delete(`/schedule/${id}`);

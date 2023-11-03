@@ -4,6 +4,7 @@ import {
   deleteSchedule,
   getSchedule,
   getScheduleList,
+  updateSchedule,
 } from '@lib/api/schedule';
 import useToggle from '@lib/hooks/useToggle';
 
@@ -61,14 +62,10 @@ const ScheduleContainer = () => {
 
   const onClickEmptyCell = (info: any) => {
     filterScheduleByDate(dayjs(info.date));
-    // onChangeUpsertInfo('startDate', selectDate);
-    // onChangeUpsertInfo('endDate', selectDate);
     toggleSchedule();
   };
   const onClickDataCell = (info: any) => {
     filterScheduleByDate(dayjs(info.event.start));
-    // onChangeUpsertInfo('startDate', selectDate);
-    // onChangeUpsertInfo('endDate', selectDate);
     toggleSchedule();
   };
 
@@ -140,6 +137,18 @@ const ScheduleContainer = () => {
     },
   });
 
+  const updateScheduleMutation = useMutation(updateSchedule, {
+    onSuccess: () => {
+      message.success('일정이 수정되었습니다.');
+      refetchSchedules();
+      toggleUpsert();
+      toggleSchedule();
+    },
+    onError: () => {
+      message.error('일정을 수정할수없습니다.');
+    },
+  });
+
   const onConfirm = () => {
     if (!upsertInfo.title) {
       message.error('제목을 입력해주세요.');
@@ -152,6 +161,11 @@ const ScheduleContainer = () => {
     }
     if (!upsertInfo.endDate) {
       message.error('종료 날짜를 입력해주세요.');
+    }
+    if (upsertInfo.id) {
+      console.log(upsertInfo);
+      updateScheduleMutation.mutate(upsertInfo as any);
+      return;
     }
     createScheduleMutation.mutate(upsertInfo as any);
   };

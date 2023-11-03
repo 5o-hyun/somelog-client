@@ -56,7 +56,12 @@ const ScheduleDrawer: React.FC<ScheduleDrawerProps> = ({
                 <BiCalendarHeart />
                 <BsArrowUpShort />
               </div>
-              <DatePicker />
+              <DatePicker
+                onChange={(date) => {
+                  onChange('startDate', dayjs(date).format());
+                  onChange('endDate', dayjs(date).format());
+                }}
+              />
             </div>
           ) : (
             <div className="infoDate" onClick={toggleDate}>
