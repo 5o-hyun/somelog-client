@@ -6,6 +6,12 @@ export const getScheduleList = async () => {
   return data;
 };
 
+// 일정 조회
+export const getSchedule = async (id: number) => {
+  const { data } = await defaultAxios.get(`/schedule/${id}`);
+  return data;
+};
+
 // 일정 등록
 export const createSchedule = async (data: {
   title: string;

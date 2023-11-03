@@ -2,15 +2,16 @@ import { getCategoryList } from '@lib/api/category';
 import {
   createSchedule,
   deleteSchedule,
+  getSchedule,
   getScheduleList,
 } from '@lib/api/schedule';
 import useToggle from '@lib/hooks/useToggle';
 
 import { Categories } from '@typess/category';
-import { Schedules } from '@typess/schedule';
+import { Schedule, Schedules } from '@typess/schedule';
 
 import Category from '@components/schedule/Category';
-import Schedule from '@components/schedule/Schedule';
+import ScheduleList from '@components/schedule/ScheduleList';
 import ScheduleUpsert from '@components/schedule/ScheduleUpsert';
 
 import { EventContentArg } from '@fullcalendar/core';
@@ -60,14 +61,14 @@ const ScheduleContainer = () => {
 
   const onClickEmptyCell = (info: any) => {
     filterScheduleByDate(dayjs(info.date));
-    onChangeUpsertInfo('startDate', dayjs(info.date));
-    onChangeUpsertInfo('endDate', dayjs(info.date));
+    // onChangeUpsertInfo('startDate', selectDate);
+    // onChangeUpsertInfo('endDate', selectDate);
     toggleSchedule();
   };
   const onClickDataCell = (info: any) => {
     filterScheduleByDate(dayjs(info.event.start));
-    onChangeUpsertInfo('startDate', dayjs(info.date));
-    onChangeUpsertInfo('endDate', dayjs(info.date));
+    // onChangeUpsertInfo('startDate', selectDate);
+    // onChangeUpsertInfo('endDate', selectDate);
     toggleSchedule();
   };
 
@@ -119,11 +120,13 @@ const ScheduleContainer = () => {
   };
 
   const onClickCategory = (value: string) => {
+    setSchduleId(undefined);
     onChangeUpsertInfo('category', value);
+    onChangeUpsertInfo('startDate', selectDate);
+    onChangeUpsertInfo('endDate', selectDate);
     toggleCategory();
     toggleUpsert();
   };
-  console.log(upsertInfo);
 
   const createScheduleMutation = useMutation(createSchedule, {
     onSuccess: () => {
@@ -152,6 +155,44 @@ const ScheduleContainer = () => {
     }
     createScheduleMutation.mutate(upsertInfo as any);
   };
+
+  const [scheduleId, setSchduleId] = useState<number | undefined>(undefined);
+  const { data: schedule } = useQuery<Schedule>(['schedule', scheduleId], () =>
+    getSchedule(scheduleId as number),
+  );
+
+  const onClickSchedule = (id: number) => {
+    setSchduleId(id);
+    toggleUpsert();
+  };
+
+  const onClickAdd = () => {
+    setSchduleId(undefined);
+    toggleCategory();
+  };
+
+  useEffect(() => {
+    if (schedule) {
+      setUpsertInfo({
+        id: schedule.id,
+        title: schedule.title,
+        memo: schedule.memo,
+        startDate: schedule.startDate,
+        endDate: schedule.endDate,
+        category: schedule.category,
+      });
+    }
+    if (isOpenUpsert === false && !schedule) {
+      setUpsertInfo({
+        id: null,
+        title: undefined,
+        memo: undefined,
+        startDate: undefined,
+        endDate: undefined,
+        category: undefined,
+      });
+    }
+  }, [schedule, isOpenUpsert]);
 
   return (
     <Container>
@@ -187,12 +228,13 @@ const ScheduleContainer = () => {
       />
 
       {isOpenSchedule && (
-        <Schedule
+        <ScheduleList
           date={selectDate}
           todaySchedules={todaySchedules}
           categories={categories}
           onClose={toggleSchedule}
-          onClickAdd={toggleCategory}
+          onClick={onClickSchedule}
+          onClickAdd={onClickAdd}
           onDelete={onDeleteSchedule}
         />
       )}

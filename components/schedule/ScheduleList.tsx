@@ -13,6 +13,7 @@ interface ScheduleProps {
   todaySchedules: Schedules;
   categories?: Categories;
   onClose: () => void;
+  onClick: (id: number) => void;
   onClickAdd: () => void;
   onDelete: (id: number) => void;
 }
@@ -22,6 +23,7 @@ const Schedule: React.FC<ScheduleProps> = ({
   todaySchedules,
   categories,
   onClose,
+  onClick,
   onClickAdd,
   onDelete,
 }) => {
@@ -41,8 +43,10 @@ const Schedule: React.FC<ScheduleProps> = ({
               key={schedule.id}
               color={pickCategory ? pickCategory.color : '#ddd'}
             >
-              <p className="category">{schedule.category}</p>
-              <p className="title">{schedule.title}</p>
+              <div className="info" onClick={() => onClick(schedule.id)}>
+                <p className="category">{schedule.category}</p>
+                <p className="title">{schedule.title}</p>
+              </div>
               <div className="deleteBtn" onClick={() => onDelete(schedule.id)}>
                 <DeleteOutlined />
               </div>
@@ -85,14 +89,15 @@ const ScheduleBox = styled.div`
   border-radius: 8px;
   position: relative;
   cursor: pointer;
-  .title {
-    font-size: 16px;
+  display: flex;
+  align-items: center;
+  .info {
+    flex: 1;
+    .title {
+      font-size: 16px;
+    }
   }
   .deleteBtn {
-    position: absolute;
-    top: 50%;
-    right: 20px;
-    transform: translateY(-50%);
     border: 1px solid ${({ theme }) => theme.colors.gray[500]};
     border-radius: 8px;
     display: grid;

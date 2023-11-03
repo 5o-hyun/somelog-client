@@ -30,6 +30,7 @@ const ScheduleDrawer: React.FC<ScheduleDrawerProps> = ({
 }) => {
   const [isOpenDate, toggleDate] = useToggle();
   const [isOpenMemo, toggleMemo] = useToggle();
+
   return (
     <StyledDrawer placement="bottom" closable={false} onClose={onClose} open>
       <Input
