@@ -1,9 +1,9 @@
-import MemoIdContainer from '@container/memo/MemoIdContainer';
+import MemoDetailContainer from '@container/memo/MemoDetailContainer';
 
 import React from 'react';
 
 const Memo = () => {
-  return <MemoIdContainer />;
+  return <MemoDetailContainer />;
 };
 
 export default Memo;

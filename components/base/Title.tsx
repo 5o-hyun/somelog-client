@@ -20,7 +20,6 @@ const Container = styled.div`
   margin-bottom: 16px;
   .title {
     font-size: 24px;
-    font-weight: bold;
   }
 `;
 

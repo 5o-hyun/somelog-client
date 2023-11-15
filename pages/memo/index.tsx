@@ -1,9 +1,9 @@
-import MemoContainer from '@container/memo/MemoContainer';
+import MemoGridContainer from '@container/memo/MemoGridContainer';
 
 import React from 'react';
 
 const index = () => {
-  return <MemoContainer />;
+  return <MemoGridContainer />;
 };
 
 export default index;
