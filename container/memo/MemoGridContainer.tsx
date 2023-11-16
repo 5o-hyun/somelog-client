@@ -12,14 +12,10 @@ import { useQuery } from 'react-query';
 const MemoContainer = () => {
   const { data: memos } = useQuery<Memos>('memos', getMemos);
 
-  const onClickCreateButton = () => {
-    console.log('글쓰기');
-  };
-
   return (
     <>
       <Title name="메모장" />
-      <MemoGridToolBar onClick={onClickCreateButton} />
+      <MemoGridToolBar />
       <MemoGrid memos={memos} />
     </>
   );
