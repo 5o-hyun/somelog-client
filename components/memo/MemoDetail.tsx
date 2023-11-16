@@ -16,7 +16,7 @@ const MemoDetail: React.FC<MemoDetailProps> = ({ memo }) => {
   );
 };
 const Container = styled.div`
-  aspect-ratio: 1 / 1.4;
+  aspect-ratio: 1 / 1.3;
   padding: 36px;
   box-sizing: border-box;
   border-radius: 8px;
@@ -50,6 +50,7 @@ const Container = styled.div`
     border-top: 1px solid ${({ theme }) => theme.colors.gray[400]};
     padding-top: 20px;
     font-size: 18px;
+    white-space: pre-wrap;
     @media ${({ theme }) => theme.devices.mobile} {
       padding-top: 12px;
       font-size: 16px;
