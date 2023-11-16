@@ -16,3 +16,8 @@ export const getMemo = async (id: number) => {
 export const createMemo = async (data: { title: string; detail: string }) => {
   await defaultAxios.post(`/memo`, data);
 };
+
+// 메모 삭제
+export const deleteMemo = async (id: number) => {
+  await defaultAxios.delete(`/memo/${id}`);
+};

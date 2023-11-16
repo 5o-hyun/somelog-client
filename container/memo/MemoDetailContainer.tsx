@@ -1,21 +1,15 @@
-import { getMemo } from '@lib/api/memo';
+import { deleteMemo, getMemo } from '@lib/api/memo';
 
 import { Memo } from '@typess/memo';
 
-import Button from '@components/base/Button';
 import Title from '@components/base/Title';
 import MemoDetail from '@components/memo/MemoDetail';
+import MemoDetailToolBar from '@components/memo/MemoDetailToolBar';
 
-import { DeleteOutlined } from '@ant-design/icons';
-
-import { Card } from 'antd';
-import Link from 'next/link';
+import { message } from 'antd';
 import { useRouter } from 'next/router';
 import React from 'react';
-import { FaPen } from 'react-icons/fa';
-import { IoIosArrowBack } from 'react-icons/io';
-import { useQuery } from 'react-query';
-import styled from 'styled-components';
+import { useMutation, useQuery } from 'react-query';
 
 const MemoIdContainer = () => {
   const router = useRouter();
@@ -25,32 +19,27 @@ const MemoIdContainer = () => {
     getMemo(memoId),
   );
 
+  const deleteMemoMutation = useMutation(deleteMemo, {
+    onSuccess: () => {
+      message.success('메모가 삭제되었습니다.');
+      router.push('/memo');
+    },
+    onError: () => {
+      message.error('존재하지 않는 메모입니다.');
+    },
+  });
+
+  const onDelete = () => {
+    deleteMemoMutation.mutate(memoId);
+  };
+
   return (
-    <Container>
+    <>
       <Title name="메모장" />
-      <div className="toolBar">
-        <Link href={'/memo'}>
-          <Button name="돌아가기" icon={<IoIosArrowBack />} size={16} />
-        </Link>
-        <div className="right">
-          <Button name="수정" icon={<FaPen />} />
-          <Button name="삭제" icon={<DeleteOutlined />} size={16} />
-        </div>
-      </div>
+      <MemoDetailToolBar onDelete={onDelete} />
       <MemoDetail memo={memo} />
-    </Container>
+    </>
   );
 };
-const Container = styled.div`
-  .toolBar {
-    display: flex;
-    justify-content: space-between;
-    margin-bottom: 16px;
-    .right {
-      display: flex;
-      gap: 8px;
-    }
-  }
-`;
 
 export default MemoIdContainer;
