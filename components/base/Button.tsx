@@ -5,11 +5,12 @@ interface ButtonProps {
   icon?: React.ReactNode;
   name?: string | number;
   size?: number;
+  onClick?: () => void;
 }
 
-const Button: React.FC<ButtonProps> = ({ icon, name, size }) => {
+const Button: React.FC<ButtonProps> = ({ icon, name, size, onClick }) => {
   return (
-    <Container size={size}>
+    <Container size={size} onClick={onClick}>
       {icon}
       <p>{name}</p>
     </Container>
