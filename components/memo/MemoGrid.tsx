@@ -1,5 +1,6 @@
 import { Memos } from '@typess/memo';
 
+import { Empty } from 'antd';
 import Link from 'next/link';
 import React from 'react';
 import styled from 'styled-components';
@@ -10,16 +11,21 @@ interface MemoGridProps {
 
 const MemoGrid: React.FC<MemoGridProps> = ({ memos }) => {
   return (
-    <Container>
-      {memos?.map((memo) => (
-        <Link href={`/memo/${memo.id}`} key={memo.id}>
-          <div className="memo">
-            <p className="title">{memo.title}</p>
-            <div className="detail">{memo.detail}</div>
-          </div>
-        </Link>
-      ))}
-    </Container>
+    <>
+      <Container>
+        {memos?.map((memo) => (
+          <Link href={`/memo/${memo.id}`} key={memo.id}>
+            <div className="memo">
+              <p className="title">{memo.title}</p>
+              <div className="detail">{memo.detail}</div>
+            </div>
+          </Link>
+        ))}
+      </Container>
+      {memos?.length === 0 && (
+        <Empty description="데이터가 없습니다. 새로 등록해보세요!" />
+      )}
+    </>
   );
 };
 const Container = styled.div`

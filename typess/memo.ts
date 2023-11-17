@@ -5,7 +5,7 @@ export type Memos = {
 }[];
 
 export type Memo = {
-  id: number;
-  title: string;
-  detail: string;
+  id: number | undefined;
+  title: string | undefined;
+  detail: string | undefined;
 };
