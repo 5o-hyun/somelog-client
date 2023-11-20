@@ -1,7 +1,10 @@
 import Layout from '@components/base/Layout';
-import { antdTheme } from '@styles/antdTheme';
+
 import { GlobalStyles } from '@styles/GlobalStyles';
+import { antdTheme } from '@styles/antdTheme';
 import theme from '@styles/theme';
+
+import socket from './server';
 import { ConfigProvider } from 'antd';
 import type { AppProps } from 'next/app';
 import { QueryClient, QueryClientProvider } from 'react-query';
