@@ -1,9 +1,11 @@
+import { User } from '@typess/user';
+
 import React from 'react';
 import styled from 'styled-components';
 
 interface MessageContainerProps {
   messageList: any;
-  user: any;
+  user: User;
 }
 
 const MessageContainer: React.FC<MessageContainerProps> = ({
@@ -51,13 +53,14 @@ const Container = styled.div`
     display: flex;
     justify-content: center;
     align-items: center;
+    margin-bottom: 8px;
     .message {
       background-color: #55667758;
       border-radius: 100px;
       text-align: center;
-      color: white;
-      padding: 2px 14px;
-      font-size: 18px;
+      color: ${({ theme }) => theme.colors.white};
+      padding: 4px 14px;
+      font-size: 14px;
     }
   }
   .myMessageWrapper {
