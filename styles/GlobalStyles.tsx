@@ -5,12 +5,6 @@ export const GlobalStyles = createGlobalStyle`
     ${reset}
     html,
     body {
-        @font-face {
-            font-family: 'ACCchildrenheartOTF-Regular';
-            src: url('https://cdn.jsdelivr.net/gh/projectnoonnu/noonfonts_2112-2@1.0/ACCchildrenheartOTF-Regular.woff') format('woff');
-            font-weight: normal;
-            font-style: normal;
-        }
         color:${({ theme }) => theme.colors.textColor};
         font-family: 'ACCchildrenheartOTF-Regular';
         -webkit-user-select:none;

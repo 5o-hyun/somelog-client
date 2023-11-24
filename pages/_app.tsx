@@ -6,6 +6,7 @@ import { GlobalStyles } from '@styles/GlobalStyles';
 import { antdTheme } from '@styles/antdTheme';
 import theme from '@styles/theme';
 
+import '../styles/font.css';
 import { ConfigProvider } from 'antd';
 import type { AppProps } from 'next/app';
 import { useEffect, useState } from 'react';
