@@ -1,3 +1,4 @@
+import Anniversary from '@components/home/Anniversary';
 import PhotoSlider from '@components/home/PhotoSlider';
 
 import React from 'react';
@@ -7,6 +8,7 @@ const HomeContainer = () => {
   return (
     <Container>
       <PhotoSlider />
+      <Anniversary />
       <div className="border" />
     </Container>
   );
