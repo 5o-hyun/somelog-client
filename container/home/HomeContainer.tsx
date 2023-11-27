@@ -1,5 +1,6 @@
 import Anniversary from '@components/home/Anniversary';
 import PhotoSlider from '@components/home/PhotoSlider';
+import Profile from '@components/home/Profile';
 
 import React from 'react';
 import styled from 'styled-components';
@@ -9,6 +10,7 @@ const HomeContainer = () => {
     <Container>
       <PhotoSlider />
       <Anniversary />
+      <Profile />
       <div className="border" />
     </Container>
   );
