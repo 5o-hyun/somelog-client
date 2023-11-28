@@ -1,9 +1,9 @@
+import { navigationMenu } from '@lib/data/navigationMenus';
+
 import Link from 'next/link';
 import { useRouter } from 'next/router';
 import React from 'react';
 import styled from 'styled-components';
-
-import { navigationMenu } from '@lib/data/navigationMenus';
 
 const Navigation = () => {
   const router = useRouter();
@@ -16,7 +16,9 @@ const Navigation = () => {
             <Link href={menu.link}>
               <div
                 className={
-                  menu.link === router.pathname ? 'active iconBox' : 'iconBox'
+                  menu.link === `/${router.pathname.split('/')[1]}`
+                    ? 'active iconBox'
+                    : 'iconBox'
                 }
               >
                 {menu.icon}

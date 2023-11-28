@@ -1,8 +1,15 @@
 import ScheduleContainer from '@container/schedule/ScheduleContainer';
+
+import Layout from '@components/base/Layout';
+
 import React from 'react';
 
 const index = () => {
-  return <ScheduleContainer />;
+  return (
+    <Layout>
+      <ScheduleContainer />
+    </Layout>
+  );
 };
 
 export default index;

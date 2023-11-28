@@ -9,9 +9,9 @@ import theme from '@styles/theme';
 import '../styles/font.css';
 import { ConfigProvider } from 'antd';
 import type { AppProps } from 'next/app';
-import { useEffect, useState } from 'react';
+import { useRouter } from 'next/router';
 import { QueryClient, QueryClientProvider } from 'react-query';
-import { ThemeProvider } from 'styled-components';
+import styled, { ThemeProvider } from 'styled-components';
 
 socket.on('connect', () => console.log('connect'));
 
@@ -23,9 +23,7 @@ function MyApp({ Component, pageProps }: AppProps) {
       <ConfigProvider theme={antdTheme}>
         <ThemeProvider theme={theme}>
           <GlobalStyles />
-          <Layout>
-            <Component {...pageProps} />
-          </Layout>
+          <Component {...pageProps} />
         </ThemeProvider>
       </ConfigProvider>
     </QueryClientProvider>
