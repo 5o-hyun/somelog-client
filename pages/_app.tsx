@@ -1,7 +1,5 @@
 import socket from '@lib/socket';
 
-import Layout from '@components/base/Layout';
-
 import { GlobalStyles } from '@styles/GlobalStyles';
 import { antdTheme } from '@styles/antdTheme';
 import theme from '@styles/theme';
@@ -9,9 +7,8 @@ import theme from '@styles/theme';
 import '../styles/font.css';
 import { ConfigProvider } from 'antd';
 import type { AppProps } from 'next/app';
-import { useRouter } from 'next/router';
 import { QueryClient, QueryClientProvider } from 'react-query';
-import styled, { ThemeProvider } from 'styled-components';
+import { ThemeProvider } from 'styled-components';
 
 socket.on('connect', () => console.log('connect'));
 
