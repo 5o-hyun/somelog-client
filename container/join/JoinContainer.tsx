@@ -1,6 +1,7 @@
 import { createUser } from '@lib/api/user';
 
 import { Button, DatePicker, Input, Select, Steps, message, theme } from 'antd';
+import Link from 'next/link';
 import React, { useState } from 'react';
 import { useMutation } from 'react-query';
 import styled from 'styled-components';
@@ -73,7 +74,7 @@ const JoinContainer = () => {
 
   const items = [
     {
-      title: '로그인',
+      title: '회원가입/로그인',
       content: (
         <>
           <div className="infoWrapper">
@@ -149,7 +150,11 @@ const JoinContainer = () => {
       <div className="contentsWrapper">{items[current].content}</div>
       <div className="buttonWrapper">
         {/* 1단계 */}
-        {current === 0 && <Button>로그인</Button>}
+        {current === 0 && (
+          <Link href={'/login'}>
+            <Button>로그인</Button>
+          </Link>
+        )}
         {current === 0 && (
           <Button type="primary" onClick={onSubmitCreateUser}>
             계정생성
@@ -173,7 +178,7 @@ const JoinContainer = () => {
       </div>
       {current === 0 && (
         <p className="agree">
-          로그인을 함으로써 썸로그의 <a href="#none">개인정보 취급방침</a>
+          회원가입을 함으로써 썸로그의 <a href="#none">개인정보 취급방침</a>
           ,&nbsp;
           <a href="#none">서비스 이용약관</a>에 동의합니다.
         </p>
