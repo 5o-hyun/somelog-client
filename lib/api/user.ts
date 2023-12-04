@@ -6,10 +6,18 @@ export const createUser = async (data: {
   email: string;
   pw: string;
 }) => {
-  await defaultAxios.post(`/user`, data);
+  const response = await defaultAxios.post(`/user`, data);
+  return response.data;
 };
 
 // 로그인
 export const login = async (data: { email: string; pw: string }) => {
-  await defaultAxios.post(`/user/login`, data);
+  const response = await defaultAxios.post(`/user/login`, data);
+  return response.data;
+};
+
+// 로그인유지
+export const userLogin = async () => {
+  const { data } = await defaultAxios.get(`/user`);
+  return;
 };

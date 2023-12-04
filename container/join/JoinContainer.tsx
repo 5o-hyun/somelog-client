@@ -1,12 +1,15 @@
 import { createUser } from '@lib/api/user';
 
+import useAuthStore from '@/stores/auth';
+
 import { Button, DatePicker, Input, Select, Steps, message, theme } from 'antd';
 import Link from 'next/link';
-import React, { useState } from 'react';
+import React, { useEffect, useState } from 'react';
 import { useMutation } from 'react-query';
 import styled from 'styled-components';
 
 const JoinContainer = () => {
+  const { user, loginUser, logoutUser } = useAuthStore();
   const [current, setCurrent] = useState(0);
 
   const next = () => {
@@ -71,6 +74,13 @@ const JoinContainer = () => {
     }
     createUserInfo.mutate(userInfo as any);
   };
+
+  useEffect(() => {
+    console.log(user);
+    if (user) {
+      next();
+    }
+  }, []);
 
   const items = [
     {
@@ -161,12 +171,13 @@ const JoinContainer = () => {
           </Button>
         )}
         {/* 2단계 */}
-        {current > 0 && <Button onClick={() => prev()}>돌아가기</Button>}
-        {current > 0 && (
+        {current === 1 && <Button onClick={() => prev()}>로그아웃</Button>}
+        {current === 1 && (
           <Button type="primary" onClick={() => next()}>
             다음단계
           </Button>
         )}
+        {current === 2 && <Button onClick={() => prev()}>돌아가기</Button>}
         {current === items.length - 1 && (
           <Button
             type="primary"
