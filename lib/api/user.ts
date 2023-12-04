@@ -8,3 +8,8 @@ export const createUser = async (data: {
 }) => {
   await defaultAxios.post(`/user`, data);
 };
+
+// 로그인
+export const login = async (data: { email: string; pw: string }) => {
+  await defaultAxios.post(`/user/login`, data);
+};

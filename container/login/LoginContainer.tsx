@@ -1,24 +1,66 @@
-import { Button, Input } from 'antd';
+import { login } from '@lib/api/user';
+
+import { Button, Input, message } from 'antd';
 import Link from 'next/link';
-import React from 'react';
+import { useRouter } from 'next/router';
+import React, { useState } from 'react';
 import { BsSearchHeart } from 'react-icons/bs';
+import { useMutation } from 'react-query';
 import styled from 'styled-components';
 
 const LoginContainer = () => {
+  const router = useRouter();
+  const [user, setUser] = useState<{
+    email?: string;
+    pw?: string;
+  }>({
+    email: undefined,
+    pw: undefined,
+  });
+
+  const onChangeInput = (key: string, value: string) => {
+    setUser((prev) => ({
+      ...prev,
+      [key]: value,
+    }));
+  };
+
+  const userLogin = useMutation(login, {
+    onSuccess: () => {
+      message.success('로그인 되었습니다.');
+      router.push('/join');
+    },
+    onError: (err: any) => {
+      message.error(err.response.data);
+    },
+  });
+
+  const onLogin = () => {
+    userLogin.mutate(user as any);
+  };
+
   return (
     <Container>
       <p className="title">로그인</p>
       <div className="contentsWrapper">
         <div className="contents">
           <p className="contentsTitle">이메일</p>
-          <Input placeholder="이메일" />
+          <Input
+            value={user?.email}
+            onChange={(e) => onChangeInput('email', e.target.value)}
+            placeholder="이메일"
+          />
         </div>
         <div className="contents">
           <p className="contentsTitle">비밀번호</p>
-          <Input placeholder="비밀번호" />
+          <Input
+            value={user?.pw}
+            onChange={(e) => onChangeInput('pw', e.target.value)}
+            placeholder="비밀번호"
+          />
         </div>
         <div className="contents">
-          <Button type="primary" className="confirmButton">
+          <Button type="primary" className="confirmButton" onClick={onLogin}>
             로그인
           </Button>
         </div>
