@@ -12,8 +12,10 @@ import {
   message,
   theme,
 } from 'antd';
+import dayjs from 'dayjs';
 import Link from 'next/link';
 import React, { useEffect, useState } from 'react';
+import { MdOutlineContentCopy } from 'react-icons/md';
 import { useMutation } from 'react-query';
 import styled from 'styled-components';
 
@@ -28,6 +30,7 @@ const JoinContainer = () => {
     setCurrent(current - 1);
   };
 
+  // 회원가입
   const [userInfo, setUserInfo] = useState<{
     nickname?: string;
     email?: string;
@@ -83,12 +86,17 @@ const JoinContainer = () => {
     createUserInfo.mutate(userInfo as any);
   };
 
+  // 페이지 랜더링
   useEffect(() => {
+    if (user?.birthday) {
+      return setCurrent(2);
+    }
     if (user) {
-      next();
+      return next();
     }
   }, []);
 
+  // 추가정보입력
   const [addInfo, setAddInfo] = useState<{
     userId?: number;
     sex?: string;
@@ -105,10 +113,6 @@ const JoinContainer = () => {
       [key]: value,
     }));
   };
-
-  useEffect(() => {
-    console.log(addInfo);
-  }, [addInfo]);
 
   const updateUserInfo = useMutation(userAddInfo, {
     onSuccess: () => {
@@ -132,11 +136,13 @@ const JoinContainer = () => {
     updateUserInfo.mutate(addInfo as any);
   };
 
+  // 연인연결
+
   const items = [
     {
       title: '회원가입/로그인',
       content: (
-        <>
+        <div className="contentsWrapper">
           <div className="infoWrapper">
             <div className="info">
               <p>이름(닉네임)</p>
@@ -171,47 +177,65 @@ const JoinContainer = () => {
               />
             </div>
           </div>
-        </>
+        </div>
       ),
     },
     {
       title: '추가정보',
       content: (
-        <div className="infoWrapper">
-          <div className="info">
-            <p>성별</p>
-            <Select
-              value={addInfo?.sex}
-              placeholder="성별을 선택해주세요"
-              onChange={(value) => onChangeAddInfo('sex', value)}
-              options={[
-                { value: 'M', label: '남자' },
-                { value: 'W', label: '여자' },
-              ]}
-            />
-          </div>
-          <div className="info">
-            <p>생일</p>
-            <DatePicker
-              placeholder="생일을 선택해주세요"
-              onChange={(date, dateString) =>
-                onChangeAddInfo('birthday', dateString)
-              }
-            />
+        <div className="contentsWrapper">
+          <div className="infoWrapper">
+            <div className="info">
+              <p>성별</p>
+              <Select
+                value={addInfo?.sex}
+                placeholder="성별을 선택해주세요"
+                onChange={(value) => onChangeAddInfo('sex', value)}
+                options={[
+                  { value: 'M', label: '남자' },
+                  { value: 'W', label: '여자' },
+                ]}
+              />
+            </div>
+            <div className="info">
+              <p>생일</p>
+              <DatePicker
+                placeholder="생일을 선택해주세요"
+                onChange={(date, dateString) =>
+                  onChangeAddInfo('birthday', dateString)
+                }
+              />
+            </div>
           </div>
         </div>
       ),
     },
     {
       title: '연인연결',
-      content: 'Last-content',
+      content: (
+        <div className="connectWrapper">
+          <p className="title">나의 초대장 링크를 상대방에게 공유하세요</p>
+          <div className="imgWrapper">
+            <img src="/images/join/connect.png" alt="커플이미지" />
+            <div className="codeWrapper">
+              <p className="code">ckdjeusjdo</p>
+              <MdOutlineContentCopy className="copyBtn" />
+            </div>
+          </div>
+          <div className="linkWrapper">
+            <p className="linkTitle">커플 중 1명만 입력해도 연결됩니다</p>
+            <p className="guide">연인의 초대장 링크 붙여넣기</p>
+            <Input className="box" placeholder="두근두근" />
+          </div>
+        </div>
+      ),
     },
   ];
 
   return (
     <Container>
       <Steps current={current} items={items} />
-      <div className="contentsWrapper">{items[current]?.content}</div>
+      <div>{items[current]?.content}</div>
       <div className="buttonWrapper">
         {/* 1단계 */}
         {current === 0 && (
@@ -246,7 +270,7 @@ const JoinContainer = () => {
             type="primary"
             onClick={() => message.success('회원가입이 완료되었습니다!')}
           >
-            완료
+            연결하기
           </Button>
         )}
       </div>
@@ -261,6 +285,75 @@ const JoinContainer = () => {
   );
 };
 const Container = styled.div`
+  .connectWrapper {
+    color: ${({ theme }) => theme.colors.textColor};
+    margin-top: 16px;
+    padding: 20px 0;
+    @media ${({ theme }) => theme.devices.mobile} {
+      padding: 12px;
+    }
+    .title {
+      font-size: 18px;
+      text-align: center;
+      margin: 12px 0;
+    }
+    .imgWrapper {
+      position: relative;
+      .codeWrapper {
+        position: absolute;
+        bottom: 20px;
+        left: 50%;
+        transform: translateX(-50%);
+        display: flex;
+        align-items: center;
+        gap: 8px;
+        background-color: rgba(255, 255, 255, 0.5);
+        padding: 8px 12px;
+        border-radius: 12px;
+        border: 2px dashed ${({ theme }) => theme.colors.primaryColor};
+        .code {
+          font-size: 30px;
+          font-weight: bold;
+          color: ${({ theme }) => theme.colors.subColor};
+          cursor: pointer;
+        }
+        .copyBtn {
+          width: 18px;
+          height: 18px;
+          margin-top: 4px;
+          cursor: pointer;
+          &:hover,
+          &:active,
+          &:focus {
+            color: ${({ theme }) => theme.colors.primaryColor};
+          }
+        }
+      }
+    }
+    .linkWrapper {
+      padding-top: 20px;
+      @media ${({ theme }) => theme.devices.mobile} {
+        padding-top: 16px;
+      }
+      border-top: 1px dashed ${({ theme }) => theme.colors.gray[300]};
+      .linkTitle {
+        margin-bottom: 20px;
+        text-align: center;
+        color: ${({ theme }) => theme.colors.gray[500]};
+        @media ${({ theme }) => theme.devices.mobile} {
+          margin-bottom: 16px;
+        }
+      }
+      .guide {
+        margin-bottom: 8px;
+      }
+      .box {
+        display: flex;
+        align-items: center;
+        gap: 8px;
+      }
+    }
+  }
   .contentsWrapper {
     color: ${({ theme }) => theme.colors.textColor};
     border: 1px dashed ${({ theme }) => theme.colors.gray[300]};
