@@ -1,8 +1,17 @@
-import { createUser } from '@lib/api/user';
+import { createUser, userAddInfo } from '@lib/api/user';
 
 import useAuthStore from '@/stores/auth';
 
-import { Button, DatePicker, Input, Select, Steps, message, theme } from 'antd';
+import {
+  Button,
+  DatePicker,
+  Input,
+  Popconfirm,
+  Select,
+  Steps,
+  message,
+  theme,
+} from 'antd';
 import Link from 'next/link';
 import React, { useEffect, useState } from 'react';
 import { useMutation } from 'react-query';
@@ -53,7 +62,6 @@ const JoinContainer = () => {
   });
 
   const onSubmitCreateUser = () => {
-    console.log(userInfo);
     if (!userInfo.nickname) {
       return message.error('닉네임을 입력해주세요');
     }
@@ -76,11 +84,53 @@ const JoinContainer = () => {
   };
 
   useEffect(() => {
-    console.log(user);
     if (user) {
       next();
     }
   }, []);
+
+  const [addInfo, setAddInfo] = useState<{
+    userId?: number;
+    sex?: string;
+    birthday?: string;
+  }>({
+    userId: user?.id,
+    sex: undefined,
+    birthday: undefined,
+  });
+
+  const onChangeAddInfo = (key: string, value: any) => {
+    setAddInfo((prev) => ({
+      ...prev,
+      [key]: value,
+    }));
+  };
+
+  useEffect(() => {
+    console.log(addInfo);
+  }, [addInfo]);
+
+  const updateUserInfo = useMutation(userAddInfo, {
+    onSuccess: () => {
+      message.success('정보를 모두 입력하셨습니다.');
+      next();
+    },
+    onError: (error: any) => {
+      const { response } = error;
+      if (error) {
+        message.error(response.data);
+      } else {
+        message.error('추가정보를 입력할수없습니다.');
+      }
+    },
+  });
+
+  const onClickAddInfo = () => {
+    if (!addInfo.birthday) {
+      return message.error('생일을 입력해주세요');
+    }
+    updateUserInfo.mutate(addInfo as any);
+  };
 
   const items = [
     {
@@ -131,8 +181,9 @@ const JoinContainer = () => {
           <div className="info">
             <p>성별</p>
             <Select
-              defaultValue="M"
-              // onChange={handleChange}
+              value={addInfo?.sex}
+              placeholder="성별을 선택해주세요"
+              onChange={(value) => onChangeAddInfo('sex', value)}
               options={[
                 { value: 'M', label: '남자' },
                 { value: 'W', label: '여자' },
@@ -142,14 +193,17 @@ const JoinContainer = () => {
           <div className="info">
             <p>생일</p>
             <DatePicker
-            // onChange={onChange}
+              placeholder="생일을 선택해주세요"
+              onChange={(date, dateString) =>
+                onChangeAddInfo('birthday', dateString)
+              }
             />
           </div>
         </div>
       ),
     },
     {
-      title: '완료',
+      title: '연인연결',
       content: 'Last-content',
     },
   ];
@@ -157,7 +211,7 @@ const JoinContainer = () => {
   return (
     <Container>
       <Steps current={current} items={items} />
-      <div className="contentsWrapper">{items[current].content}</div>
+      <div className="contentsWrapper">{items[current]?.content}</div>
       <div className="buttonWrapper">
         {/* 1단계 */}
         {current === 0 && (
@@ -171,13 +225,22 @@ const JoinContainer = () => {
           </Button>
         )}
         {/* 2단계 */}
-        {current === 1 && <Button onClick={() => prev()}>로그아웃</Button>}
+        {current === 1 && <Button>로그아웃</Button>}
         {current === 1 && (
-          <Button type="primary" onClick={() => next()}>
+          <Button type="primary" onClick={onClickAddInfo}>
             다음단계
           </Button>
         )}
-        {current === 2 && <Button onClick={() => prev()}>돌아가기</Button>}
+        {current === 2 && (
+          <Popconfirm
+            title="돌아가면 정보를 다시 입력해야해요. 돌아가시겠습니까?"
+            onConfirm={() => prev()}
+            okText="돌아가기"
+            cancelText="취소"
+          >
+            <Button>돌아가기</Button>
+          </Popconfirm>
+        )}
         {current === items.length - 1 && (
           <Button
             type="primary"

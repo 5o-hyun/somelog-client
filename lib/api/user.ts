@@ -21,3 +21,16 @@ export const userLogin = async () => {
   const { data } = await defaultAxios.get(`/user`);
   return;
 };
+
+// 추가정보등록
+export const userAddInfo = async (data: {
+  userId: number;
+  sex: string;
+  birthday: string;
+}) => {
+  const response = await defaultAxios.put(`/user/${data.userId}/addInfo`, {
+    sex: data.sex,
+    birthday: data.birthday,
+  });
+  return response.data;
+};
