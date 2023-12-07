@@ -10,7 +10,7 @@ export type User = {
   nickname: string;
   email: string;
   pw: string;
+  code: string;
   sex: string;
   birthday: string;
-  token: string;
 };

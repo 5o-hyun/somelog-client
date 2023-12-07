@@ -1,4 +1,4 @@
-import { createUser, userAddInfo } from '@lib/api/user';
+import { createUser, login, userAddInfo } from '@lib/api/user';
 
 import useAuthStore from '@/stores/auth';
 
@@ -12,11 +12,11 @@ import {
   message,
   theme,
 } from 'antd';
-import dayjs from 'dayjs';
 import Link from 'next/link';
 import React, { useEffect, useState } from 'react';
 import { MdOutlineContentCopy } from 'react-icons/md';
 import { useMutation } from 'react-query';
+import shortId from 'shortid';
 import styled from 'styled-components';
 
 const JoinContainer = () => {
@@ -35,10 +35,12 @@ const JoinContainer = () => {
     nickname?: string;
     email?: string;
     pw?: string;
+    code?: string;
   }>({
     nickname: undefined,
     email: undefined,
     pw: undefined,
+    code: shortId.generate(),
   });
   const [pwCheck, setPwCheck] = useState('');
 
@@ -218,7 +220,7 @@ const JoinContainer = () => {
           <div className="imgWrapper">
             <img src="/images/join/connect.png" alt="커플이미지" />
             <div className="codeWrapper">
-              <p className="code">ckdjeusjdo</p>
+              <p className="code">{user?.code}</p>
               <MdOutlineContentCopy className="copyBtn" />
             </div>
           </div>
