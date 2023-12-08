@@ -1,19 +1,13 @@
 import { login } from '@lib/api/user';
 
-import useAuthStore from '@/stores/auth';
-
 import { Button, Input, message } from 'antd';
 import Link from 'next/link';
-import { useRouter } from 'next/router';
 import React, { useState } from 'react';
 import { BsSearchHeart } from 'react-icons/bs';
 import { useMutation } from 'react-query';
 import styled from 'styled-components';
 
 const LoginContainer = () => {
-  const { user, loginUser, logoutUser } = useAuthStore();
-  const router = useRouter();
-
   const [userInfo, setUserInfo] = useState<{
     email?: string;
     pw?: string;
@@ -32,8 +26,7 @@ const LoginContainer = () => {
   const userLogin = useMutation(login, {
     onSuccess: (response) => {
       message.success('로그인 되었습니다.');
-      loginUser(response);
-      router.push('/join');
+      window.location.href = '/join';
     },
     onError: (err: any) => {
       message.error(err.response.data);

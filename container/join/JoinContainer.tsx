@@ -10,7 +10,6 @@ import {
   Select,
   Steps,
   message,
-  theme,
 } from 'antd';
 import Link from 'next/link';
 import React, { useEffect, useState } from 'react';
@@ -94,9 +93,9 @@ const JoinContainer = () => {
       return setCurrent(2);
     }
     if (user) {
-      return next();
+      return setCurrent(1);
     }
-  }, []);
+  }, [user]);
 
   // 추가정보입력
   const [addInfo, setAddInfo] = useState<{

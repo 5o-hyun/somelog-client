@@ -5,6 +5,7 @@ export const createUser = async (data: {
   nickname: string;
   email: string;
   pw: string;
+  code: string;
 }) => {
   const response = await defaultAxios.post(`/user`, data);
   return response.data;
@@ -16,10 +17,10 @@ export const login = async (data: { email: string; pw: string }) => {
   return response.data;
 };
 
-// 로그인유지
+// 회원 정보 (로그인유지)
 export const userLogin = async () => {
-  const { data } = await defaultAxios.get(`/user`);
-  return;
+  const response = await defaultAxios.get(`/user`);
+  return response.data;
 };
 
 // 추가정보등록
