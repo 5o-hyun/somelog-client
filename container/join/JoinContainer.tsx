@@ -53,6 +53,7 @@ const JoinContainer = () => {
   const createUserInfo = useMutation(createUser, {
     onSuccess: () => {
       message.success('계정이 생성되었습니다.');
+      window.location.href = '/join';
       setCurrent(current + 1);
     },
     onError: (error: any) => {
@@ -93,7 +94,11 @@ const JoinContainer = () => {
       return setCurrent(2);
     }
     if (user) {
-      return setCurrent(1);
+      setAddInfo((prev) => ({
+        ...prev,
+        userId: user.id,
+      }));
+      setCurrent(1);
     }
   }, [user]);
 
