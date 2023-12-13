@@ -49,7 +49,7 @@ MyApp.getInitialProps = async ({ ctx }: AppContext) => {
     ?.split(' ')
     .find((cookie) => cookie.startsWith('connect.sid'));
 
-  console.log('로그인쿠키', loginCookie);
+  // console.log('로그인쿠키', loginCookie);
 
   return {
     props: { isLoggedIn: !!loginCookie },

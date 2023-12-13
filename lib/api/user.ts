@@ -35,3 +35,11 @@ export const userAddInfo = async (data: {
   });
   return response.data;
 };
+
+// 연인 연결
+export const userConnect = async (data: { userId?: number; code: string }) => {
+  const response = await defaultAxios.post(`/user/${data.userId}/code`, {
+    code: data.code,
+  });
+  return response.data;
+};

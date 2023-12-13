@@ -1,4 +1,4 @@
-import { createUser, login, userAddInfo } from '@lib/api/user';
+import { createUser, login, userAddInfo, userConnect } from '@lib/api/user';
 
 import useAuthStore from '@/stores/auth';
 
@@ -12,6 +12,7 @@ import {
   message,
 } from 'antd';
 import Link from 'next/link';
+import { useRouter } from 'next/router';
 import React, { useEffect, useState } from 'react';
 import { MdOutlineContentCopy } from 'react-icons/md';
 import { useMutation } from 'react-query';
@@ -19,6 +20,7 @@ import shortId from 'shortid';
 import styled from 'styled-components';
 
 const JoinContainer = () => {
+  const router = useRouter();
   const { user, loginUser, logoutUser } = useAuthStore();
   const [current, setCurrent] = useState(0);
 
@@ -143,6 +145,39 @@ const JoinContainer = () => {
   };
 
   // 연인연결
+  const onClickCopy = async (number?: string) => {
+    try {
+      if (number) await navigator.clipboard.writeText(number);
+      message.success('클립보드에 복사되었습니다');
+    } catch (e) {
+      message.error('복사에 실패하였습니다');
+    }
+  };
+
+  const [copyNumber, setCopyNumber] = useState<string | undefined>(undefined);
+  const onChangeCopyNumber = (copyNumber: string) => {
+    setCopyNumber(copyNumber);
+  };
+  const connect = useMutation(userConnect, {
+    onSuccess: () => {
+      message.success('연인이 연결되었습니다.');
+      router.push('/');
+    },
+    onError: (error: any) => {
+      const { response } = error;
+      if (error) {
+        message.error(response.data);
+      } else {
+        message.error('알수없는 오류로 연결할수없습니다.');
+      }
+    },
+  });
+  const onClickConnect = () => {
+    if (!copyNumber) {
+      return message.error('연인의 초대장 링크를 입력해주세요');
+    }
+    connect.mutate({ userId: user?.id, code: copyNumber });
+  };
 
   const items = [
     {
@@ -224,14 +259,23 @@ const JoinContainer = () => {
           <div className="imgWrapper">
             <img src="/images/join/connect.png" alt="커플이미지" />
             <div className="codeWrapper">
-              <p className="code">{user?.code}</p>
-              <MdOutlineContentCopy className="copyBtn" />
+              <p className="code" onClick={() => onClickCopy(user?.code)}>
+                {user?.code}{' '}
+                <MdOutlineContentCopy
+                  onClick={() => onClickCopy(user?.code)}
+                  className="copyBtn"
+                />
+              </p>
             </div>
           </div>
           <div className="linkWrapper">
             <p className="linkTitle">커플 중 1명만 입력해도 연결됩니다</p>
             <p className="guide">연인의 초대장 링크 붙여넣기</p>
-            <Input className="box" placeholder="두근두근" />
+            <Input
+              onChange={(e) => onChangeCopyNumber(e.target.value)}
+              className="box"
+              placeholder="여기에 상대방의 코드를 넣어주세요!"
+            />
           </div>
         </div>
       ),
@@ -272,10 +316,7 @@ const JoinContainer = () => {
           </Popconfirm>
         )}
         {current === items.length - 1 && (
-          <Button
-            type="primary"
-            onClick={() => message.success('회원가입이 완료되었습니다!')}
-          >
+          <Button type="primary" onClick={onClickConnect}>
             연결하기
           </Button>
         )}
@@ -306,6 +347,7 @@ const Container = styled.div`
     .imgWrapper {
       position: relative;
       .codeWrapper {
+        width: max-content;
         position: absolute;
         bottom: 20px;
         left: 50%;
@@ -322,16 +364,21 @@ const Container = styled.div`
           font-weight: bold;
           color: ${({ theme }) => theme.colors.subColor};
           cursor: pointer;
-        }
-        .copyBtn {
-          width: 18px;
-          height: 18px;
-          margin-top: 4px;
           cursor: pointer;
           &:hover,
           &:active,
           &:focus {
             color: ${({ theme }) => theme.colors.primaryColor};
+            .copyBtn {
+              color: ${({ theme }) => theme.colors.primaryColor};
+            }
+          }
+          .copyBtn {
+            width: 18px;
+            height: 18px;
+            margin-top: 4px;
+            color: ${({ theme }) => theme.colors.textColor};
+            cursor: pointer;
           }
         }
       }
