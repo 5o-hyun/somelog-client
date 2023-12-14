@@ -49,8 +49,20 @@ MyApp.getInitialProps = async ({ ctx }: AppContext) => {
     ?.split(' ')
     .find((cookie) => cookie.startsWith('connect.sid'));
 
-  // console.log('로그인쿠키', loginCookie);
+  // 로그인이 필요없는 페이지
+  if (ctx.asPath === '/join' || ctx.asPath === '/login') {
+    return {
+      props: { isLoggedIn: !!loginCookie },
+    };
+  }
 
+  // 로그인이 필요한 페이지인데 쿠키가 없을경우 리다이렉트
+  if (!loginCookie) {
+    ctx.res?.writeHead(307, { Location: '/join' });
+    ctx.res?.end();
+  }
+
+  // 나머지 : 로그인이 필요하고 쿠키가 있는 페이지
   return {
     props: { isLoggedIn: !!loginCookie },
   };

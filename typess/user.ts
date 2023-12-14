@@ -9,8 +9,13 @@ export type User = {
   id: number;
   nickname: string;
   email: string;
-  pw: string;
-  code: string;
   sex: string;
   birthday: string;
+  code: string;
+  partner: {
+    id: number;
+    nickname: string;
+    sex: string;
+    birthday: string;
+  };
 };

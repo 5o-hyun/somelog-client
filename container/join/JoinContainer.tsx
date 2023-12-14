@@ -31,6 +31,23 @@ const JoinContainer = () => {
     setCurrent(current - 1);
   };
 
+  // 페이지 랜더링
+  useEffect(() => {
+    if (user?.partner) {
+      window.location.href = '/';
+    }
+    if (user?.birthday) {
+      return setCurrent(2);
+    }
+    if (user) {
+      setAddInfo((prev) => ({
+        ...prev,
+        userId: user.id,
+      }));
+      setCurrent(1);
+    }
+  }, [user]);
+
   // 회원가입
   const [userInfo, setUserInfo] = useState<{
     nickname?: string;
@@ -89,20 +106,6 @@ const JoinContainer = () => {
     }
     createUserInfo.mutate(userInfo as any);
   };
-
-  // 페이지 랜더링
-  useEffect(() => {
-    if (user?.birthday) {
-      return setCurrent(2);
-    }
-    if (user) {
-      setAddInfo((prev) => ({
-        ...prev,
-        userId: user.id,
-      }));
-      setCurrent(1);
-    }
-  }, [user]);
 
   // 추가정보입력
   const [addInfo, setAddInfo] = useState<{
