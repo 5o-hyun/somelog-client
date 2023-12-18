@@ -18,7 +18,7 @@ export const createSchedule = async (data: {
   memo: string;
   startDate: string;
   endDate: string;
-  category: string;
+  color: string;
 }) => {
   await defaultAxios.post(`/schedule`, data);
 };
@@ -30,14 +30,14 @@ export const updateSchedule = async (data: {
   memo: string;
   startDate: string;
   endDate: string;
-  category: string;
+  color: string;
 }) => {
   await defaultAxios.put(`/schedule/${data.id}`, {
     title: data.title,
     memo: data.memo,
     startDate: data.startDate,
     endDate: data.endDate,
-    category: data.category,
+    color: data.color,
   });
 };
 

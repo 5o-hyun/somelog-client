@@ -1,5 +1,7 @@
 import useToggle from '@lib/hooks/useToggle';
 
+import { Colors } from '@typess/color';
+
 import { Badge, DatePicker, Drawer, Input } from 'antd';
 import dayjs from 'dayjs';
 import React from 'react';
@@ -15,8 +17,10 @@ interface ScheduleDrawerProps {
     memo?: string;
     startDate?: string;
     endDate?: string;
-    category?: string;
+    color?: string;
   };
+  colors?: Colors;
+  onClickColor: () => void;
   onClose: () => void;
   onChange: (key: string, value: string | number) => void;
   onConfirm: () => void;
@@ -24,6 +28,8 @@ interface ScheduleDrawerProps {
 
 const ScheduleDrawer: React.FC<ScheduleDrawerProps> = ({
   upsertInfo,
+  colors,
+  onClickColor,
   onClose,
   onChange,
   onConfirm,
@@ -74,7 +80,16 @@ const ScheduleDrawer: React.FC<ScheduleDrawerProps> = ({
           <div className="infoMemo" onClick={toggleMemo}>
             {isOpenMemo ? <BiSolidNote /> : <BiNote />}
           </div>
-          <div className="infoCategory">{upsertInfo?.category}</div>
+          <div className="infoColor">
+            {colors?.map(
+              (v) =>
+                v.color === upsertInfo.color && (
+                  <div key={v.id} onClick={onClickColor}>
+                    <StyledBadge color={v.color} text={v.name} />
+                  </div>
+                ),
+            )}
+          </div>
         </div>
         <div className="confirmButton" onClick={onConfirm}>
           <HiPaperAirplane />
@@ -159,7 +174,7 @@ const StyledDrawer = styled(Drawer)`
           }
         }
       }
-      .infoCategory {
+      .infoColor {
         cursor: pointer;
       }
     }
@@ -188,6 +203,9 @@ const StyledBadge = styled(Badge)`
       width: 14px !important;
       height: 14px !important;
     }
+  }
+  .ant-badge-status-text {
+    margin-inline-start: 4px !important;
   }
 `;
 

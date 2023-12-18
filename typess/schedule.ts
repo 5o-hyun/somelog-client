@@ -4,7 +4,7 @@ export type Schedules = {
   memo: string;
   startDate: string;
   endDate: string;
-  category: string;
+  color: string;
 }[];
 
 export type Schedule = {
@@ -13,5 +13,5 @@ export type Schedule = {
   memo: string;
   startDate: string;
   endDate: string;
-  category: string;
+  color: string;
 };

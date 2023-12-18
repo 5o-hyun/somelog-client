@@ -1,12 +1,18 @@
+import useAuthStore from '@/stores/auth';
+
 import React from 'react';
 import styled from 'styled-components';
 
 const PostIt = () => {
+  const { user } = useAuthStore();
+
   return (
     <Container>
       <img src="/images/home/postit2.png" alt="포스트잇" />
       <div className="text">
-        <p className="names">앍앍앍x퉤퉤퉤</p>
+        <p className="names">
+          {user?.nickname}x{user?.partner.nickname}
+        </p>
         <p className="dDay">D + 90</p>
         <p className="desc">somelog in love</p>
       </div>

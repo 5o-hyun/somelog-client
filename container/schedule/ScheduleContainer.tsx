@@ -1,4 +1,4 @@
-import { getCategoryList } from '@lib/api/category';
+import { getColorList } from '@lib/api/color';
 import {
   createSchedule,
   deleteSchedule,
@@ -8,10 +8,10 @@ import {
 } from '@lib/api/schedule';
 import useToggle from '@lib/hooks/useToggle';
 
-import { Categories } from '@typess/category';
+import { Colors } from '@typess/color';
 import { Schedule, Schedules } from '@typess/schedule';
 
-import Category from '@components/schedule/Category';
+import ColorList from '@components/schedule/ColorList';
 import ScheduleList from '@components/schedule/ScheduleList';
 import ScheduleUpsert from '@components/schedule/ScheduleUpsert';
 
@@ -22,6 +22,7 @@ import FullCalendar from '@fullcalendar/react';
 
 import { message } from 'antd';
 import dayjs from 'dayjs';
+import { on } from 'events';
 import React, { useState } from 'react';
 import { useEffect } from 'react';
 import { useMutation, useQuery } from 'react-query';
@@ -32,14 +33,11 @@ const ScheduleContainer = () => {
     ['schedules'],
     getScheduleList,
   );
-  const { data: categories } = useQuery<Categories>(
-    'categories',
-    getCategoryList,
-  );
+  const { data: colors } = useQuery<Colors>('colors', getColorList);
 
   const [isOpenSchedule, toggleSchedule] = useToggle();
-  const [isOpenCategory, toggleCategory] = useToggle();
   const [isOpenUpsert, toggleUpsert] = useToggle();
+  const [isOpenColorSheet, toggleColorSheet] = useToggle();
 
   const [selectDate, setSelectDate] = useState();
   const [todaySchedules, setTodaySchedules] = useState<Schedules>([]);
@@ -99,14 +97,14 @@ const ScheduleContainer = () => {
     memo?: string;
     startDate?: string;
     endDate?: string;
-    category?: string;
+    color?: string;
   }>({
     id: null,
     title: undefined,
     memo: undefined,
     startDate: undefined,
     endDate: undefined,
-    category: undefined,
+    color: undefined,
   });
 
   const onChangeUpsertInfo = (key: string, value: any) => {
@@ -116,13 +114,12 @@ const ScheduleContainer = () => {
     }));
   };
 
-  const onClickCategory = (value: string) => {
-    setSchduleId(undefined);
-    onChangeUpsertInfo('category', value);
-    onChangeUpsertInfo('startDate', selectDate);
-    onChangeUpsertInfo('endDate', selectDate);
-    toggleCategory();
-    toggleUpsert();
+  const onClickColorSheet = (value: string) => {
+    setUpsertInfo((prevUpsertInfo) => ({
+      ...prevUpsertInfo,
+      color: value,
+    }));
+    toggleColorSheet();
   };
 
   const createScheduleMutation = useMutation(createSchedule, {
@@ -153,8 +150,8 @@ const ScheduleContainer = () => {
     if (!upsertInfo.title) {
       message.error('제목을 입력해주세요.');
     }
-    if (!upsertInfo.category) {
-      message.error('카테고리를 입력해주세요.');
+    if (!upsertInfo.color) {
+      message.error('컬러를 선택해주세요.');
     }
     if (!upsertInfo.startDate) {
       message.error('시작 날짜를 입력해주세요.');
@@ -163,7 +160,6 @@ const ScheduleContainer = () => {
       message.error('종료 날짜를 입력해주세요.');
     }
     if (upsertInfo.id) {
-      console.log(upsertInfo);
       updateScheduleMutation.mutate(upsertInfo as any);
       return;
     }
@@ -182,7 +178,7 @@ const ScheduleContainer = () => {
 
   const onClickAdd = () => {
     setSchduleId(undefined);
-    toggleCategory();
+    toggleUpsert();
   };
 
   useEffect(() => {
@@ -193,17 +189,17 @@ const ScheduleContainer = () => {
         memo: schedule.memo,
         startDate: schedule.startDate,
         endDate: schedule.endDate,
-        category: schedule.category,
+        color: schedule.color,
       });
     }
-    if (isOpenUpsert === false && !schedule) {
+    if (isOpenUpsert === false) {
       setUpsertInfo({
         id: null,
         title: undefined,
         memo: undefined,
-        startDate: undefined,
-        endDate: undefined,
-        category: undefined,
+        startDate: dayjs(selectDate).format('YYYY-MM-DD'),
+        endDate: dayjs(selectDate).format('YYYY-MM-DD'),
+        color: colors?.[0].color,
       });
     }
   }, [schedule, isOpenUpsert]);
@@ -224,9 +220,7 @@ const ScheduleContainer = () => {
         slotEventOverlap={false}
         eventColor="green"
         events={schedules?.map((schedule) => {
-          const pickCategory = categories?.find(
-            (v) => v.category === schedule.category,
-          );
+          const pickCategory = colors?.find((v) => v.color === schedule.color);
 
           return {
             id: schedule.id.toString(),
@@ -240,28 +234,29 @@ const ScheduleContainer = () => {
         dateClick={onClickEmptyCell}
         eventClick={onClickDataCell}
       />
-
+      {isOpenColorSheet && (
+        <ColorList
+          colors={colors}
+          onClose={toggleColorSheet}
+          onClick={onClickColorSheet}
+        />
+      )}
       {isOpenSchedule && (
         <ScheduleList
           date={selectDate}
           todaySchedules={todaySchedules}
-          categories={categories}
+          colors={colors}
           onClose={toggleSchedule}
           onClick={onClickSchedule}
           onClickAdd={onClickAdd}
           onDelete={onDeleteSchedule}
         />
       )}
-      {isOpenCategory && (
-        <Category
-          categories={categories}
-          onClick={onClickCategory}
-          onClose={toggleCategory}
-        />
-      )}
       {isOpenUpsert && (
         <ScheduleUpsert
           upsertInfo={upsertInfo}
+          colors={colors}
+          onClickColor={toggleColorSheet}
           onClose={toggleUpsert}
           onChange={onChangeUpsertInfo}
           onConfirm={onConfirm}

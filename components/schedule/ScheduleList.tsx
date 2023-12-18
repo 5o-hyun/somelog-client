@@ -1,4 +1,4 @@
-import { Categories } from '@typess/category';
+import { Colors } from '@typess/color';
 import { Schedules } from '@typess/schedule';
 
 import { DeleteOutlined } from '@ant-design/icons';
@@ -11,7 +11,7 @@ import styled from 'styled-components';
 interface ScheduleProps {
   date?: Date;
   todaySchedules: Schedules;
-  categories?: Categories;
+  colors?: Colors;
   onClose: () => void;
   onClick: (id: number) => void;
   onClickAdd: () => void;
@@ -21,7 +21,7 @@ interface ScheduleProps {
 const Schedule: React.FC<ScheduleProps> = ({
   date,
   todaySchedules,
-  categories,
+  colors,
   onClose,
   onClick,
   onClickAdd,
@@ -35,17 +35,15 @@ const Schedule: React.FC<ScheduleProps> = ({
     >
       <div className="scheduleWrapper">
         {todaySchedules.map((schedule) => {
-          const pickCategory = categories?.find(
-            (v) => v.category === schedule.category,
-          );
+          const pickCategory = colors?.find((v) => v.color === schedule.color);
           return (
             <ScheduleBox
               key={schedule.id}
               color={pickCategory ? pickCategory.color : '#ddd'}
             >
               <div className="info" onClick={() => onClick(schedule.id)}>
-                <p className="category">{schedule.category}</p>
                 <p className="title">{schedule.title}</p>
+                <p className="memo">{schedule.memo}</p>
               </div>
               <div className="deleteBtn" onClick={() => onDelete(schedule.id)}>
                 <DeleteOutlined />
@@ -95,6 +93,9 @@ const ScheduleBox = styled.div`
     flex: 1;
     .title {
       font-size: 16px;
+    }
+    .memo {
+      color: ${({ theme }) => theme.colors.gray[600]};
     }
   }
   .deleteBtn {

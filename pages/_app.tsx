@@ -11,6 +11,7 @@ import { ConfigProvider } from 'antd';
 import axios from 'axios';
 import type { AppContext, AppProps } from 'next/app';
 import { QueryClient, QueryClientProvider } from 'react-query';
+import { ReactQueryDevtools } from 'react-query/devtools';
 import { ThemeProvider } from 'styled-components';
 
 // socket.on('connect', () => console.log('connect'));
@@ -31,6 +32,7 @@ function MyApp({
 
   return (
     <QueryClientProvider client={queryClient}>
+      <ReactQueryDevtools />
       <ConfigProvider theme={antdTheme}>
         <ThemeProvider theme={theme}>
           <GlobalStyles />
