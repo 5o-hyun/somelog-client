@@ -1,8 +1,8 @@
 import { defaultAxios } from './defaultAxios';
 
 // 메모 전체목록 조회
-export const getMemos = async () => {
-  const { data } = await defaultAxios.get(`/memos`);
+export const getMemos = async (userId: number) => {
+  const { data } = await defaultAxios.get(`/memos/${userId}`);
   return data;
 };
 
@@ -13,7 +13,11 @@ export const getMemo = async (id: number) => {
 };
 
 // 메모 등록
-export const createMemo = async (data: { title: string; detail: string }) => {
+export const createMemo = async (data: {
+  title: string;
+  detail: string;
+  UserId: number;
+}) => {
   await defaultAxios.post(`/memo`, data);
 };
 

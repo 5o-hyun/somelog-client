@@ -1,8 +1,8 @@
 import { defaultAxios } from './defaultAxios';
 
 // 일정 전체목록 조회
-export const getScheduleList = async () => {
-  const { data } = await defaultAxios.get(`/schedules`);
+export const getScheduleList = async (userId: number) => {
+  const { data } = await defaultAxios.get(`/schedules/${userId}`);
   return data;
 };
 
@@ -19,6 +19,7 @@ export const createSchedule = async (data: {
   startDate: string;
   endDate: string;
   color: string;
+  UserId: number;
 }) => {
   await defaultAxios.post(`/schedule`, data);
 };
@@ -31,6 +32,7 @@ export const updateSchedule = async (data: {
   startDate: string;
   endDate: string;
   color: string;
+  UserId: number;
 }) => {
   await defaultAxios.put(`/schedule/${data.id}`, {
     title: data.title,
@@ -38,6 +40,7 @@ export const updateSchedule = async (data: {
     startDate: data.startDate,
     endDate: data.endDate,
     color: data.color,
+    UserId: data.UserId,
   });
 };
 

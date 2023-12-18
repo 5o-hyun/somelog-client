@@ -15,6 +15,7 @@ import ColorList from '@components/schedule/ColorList';
 import ScheduleList from '@components/schedule/ScheduleList';
 import ScheduleUpsert from '@components/schedule/ScheduleUpsert';
 
+import useAuthStore from '@/stores/auth';
 import { EventContentArg } from '@fullcalendar/core';
 import dayGridPlugin from '@fullcalendar/daygrid';
 import interactionPlugin from '@fullcalendar/interaction';
@@ -22,16 +23,16 @@ import FullCalendar from '@fullcalendar/react';
 
 import { message } from 'antd';
 import dayjs from 'dayjs';
-import { on } from 'events';
 import React, { useState } from 'react';
 import { useEffect } from 'react';
 import { useMutation, useQuery } from 'react-query';
 import styled from 'styled-components';
 
 const ScheduleContainer = () => {
+  const { user } = useAuthStore();
   const { data: schedules, refetch: refetchSchedules } = useQuery<Schedules>(
-    ['schedules'],
-    getScheduleList,
+    ['schedules', user?.id],
+    () => getScheduleList(user?.id as number),
   );
   const { data: colors } = useQuery<Colors>('colors', getColorList);
 
@@ -98,6 +99,7 @@ const ScheduleContainer = () => {
     startDate?: string;
     endDate?: string;
     color?: string;
+    UserId?: number;
   }>({
     id: null,
     title: undefined,
@@ -105,6 +107,7 @@ const ScheduleContainer = () => {
     startDate: undefined,
     endDate: undefined,
     color: undefined,
+    UserId: undefined,
   });
 
   const onChangeUpsertInfo = (key: string, value: any) => {
@@ -126,6 +129,7 @@ const ScheduleContainer = () => {
     onSuccess: () => {
       message.success('일정이 등록되었습니다.');
       refetchSchedules();
+      refetchSchedule();
       toggleUpsert();
       toggleSchedule();
     },
@@ -138,6 +142,7 @@ const ScheduleContainer = () => {
     onSuccess: () => {
       message.success('일정이 수정되었습니다.');
       refetchSchedules();
+      refetchSchedule();
       toggleUpsert();
       toggleSchedule();
     },
@@ -167,8 +172,9 @@ const ScheduleContainer = () => {
   };
 
   const [scheduleId, setSchduleId] = useState<number | undefined>(undefined);
-  const { data: schedule } = useQuery<Schedule>(['schedule', scheduleId], () =>
-    getSchedule(scheduleId as number),
+  const { data: schedule, refetch: refetchSchedule } = useQuery<Schedule>(
+    ['schedule', scheduleId],
+    () => getSchedule(scheduleId as number),
   );
 
   const onClickSchedule = (id: number) => {
@@ -183,25 +189,25 @@ const ScheduleContainer = () => {
 
   useEffect(() => {
     if (schedule) {
-      setUpsertInfo({
+      return setUpsertInfo({
         id: schedule.id,
         title: schedule.title,
         memo: schedule.memo,
         startDate: schedule.startDate,
         endDate: schedule.endDate,
         color: schedule.color,
+        UserId: schedule.UserId,
       });
     }
-    if (isOpenUpsert === false) {
-      setUpsertInfo({
-        id: null,
-        title: undefined,
-        memo: undefined,
-        startDate: dayjs(selectDate).format('YYYY-MM-DD'),
-        endDate: dayjs(selectDate).format('YYYY-MM-DD'),
-        color: colors?.[0].color,
-      });
-    }
+    setUpsertInfo({
+      id: null,
+      title: undefined,
+      memo: undefined,
+      startDate: dayjs(selectDate).format('YYYY-MM-DD'),
+      endDate: dayjs(selectDate).format('YYYY-MM-DD'),
+      color: colors?.[0].color,
+      UserId: user?.id,
+    });
   }, [schedule, isOpenUpsert]);
 
   return (

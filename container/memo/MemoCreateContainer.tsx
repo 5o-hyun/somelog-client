@@ -3,28 +3,41 @@ import { createMemo } from '@lib/api/memo';
 import Title from '@components/base/Title';
 import MemoCreateToolBar from '@components/memo/MemoCreateToolBar';
 
+import useAuthStore from '@/stores/auth';
+
 import { Input, message } from 'antd';
 import { useRouter } from 'next/router';
-import React, { useState } from 'react';
+import React, { useEffect, useState } from 'react';
 import { useMutation } from 'react-query';
 import styled from 'styled-components';
 
 const MemoCreateContainer = () => {
   const router = useRouter();
+  const { user } = useAuthStore();
 
   const [info, setInfo] = useState<{
     title?: string;
     detail?: string;
+    UserId?: number;
   }>({
     title: undefined,
     detail: undefined,
+    UserId: undefined,
   });
+
+  useEffect(() => {
+    setInfo((prev) => ({
+      ...prev,
+      UserId: user?.id,
+    }));
+  }, [user]);
 
   const onChangeInfo = (key: string, value: string) => {
     setInfo((prevInfo) => ({
       ...prevInfo,
       [key]: value,
     }));
+    console.log(info);
   };
 
   const createMemoMutation = useMutation(createMemo, {

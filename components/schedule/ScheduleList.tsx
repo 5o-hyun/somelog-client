@@ -82,7 +82,6 @@ const StyledModal = styled(Modal)`
 `;
 const ScheduleBox = styled.div`
   background-color: ${(props) => props.color};
-  padding: 8px 16px;
   box-sizing: border-box;
   border-radius: 8px;
   position: relative;
@@ -91,6 +90,8 @@ const ScheduleBox = styled.div`
   align-items: center;
   .info {
     flex: 1;
+    padding: 8px 16px;
+    padding-right: 0;
     .title {
       font-size: 16px;
     }
@@ -105,6 +106,8 @@ const ScheduleBox = styled.div`
     place-items: center;
     width: 30px;
     height: 30px;
+    margin: 8px 16px;
+    margin-left: 0;
     &:hover,
     &:active,
     &:focus {

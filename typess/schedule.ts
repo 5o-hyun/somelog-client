@@ -5,6 +5,7 @@ export type Schedules = {
   startDate: string;
   endDate: string;
   color: string;
+  UserId: number;
 }[];
 
 export type Schedule = {
@@ -14,4 +15,5 @@ export type Schedule = {
   startDate: string;
   endDate: string;
   color: string;
+  UserId: number;
 };
