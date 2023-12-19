@@ -1,4 +1,5 @@
 import Anniversary from '@components/home/Anniversary';
+import FloatButtons from '@components/home/FloatButtons';
 import PhotoSlider from '@components/home/PhotoSlider';
 import Profile from '@components/home/Profile';
 
@@ -12,6 +13,7 @@ const HomeContainer = () => {
       <Anniversary />
       <Profile />
       <div className="border" />
+      <FloatButtons />
     </Container>
   );
 };
