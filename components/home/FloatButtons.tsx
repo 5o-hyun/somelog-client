@@ -34,7 +34,7 @@ const FloatButtons: React.FC = () => {
         <Link href={'/home/deco'}>
           <FloatButton description="홈꾸미기" icon={<BsHouseHeart />} />
         </Link>
-        <Link href={'#'}>
+        <Link href={'/home/profile'}>
           <FloatButton description="프로필" icon={<LiaUserEditSolid />} />
         </Link>
         <Link href={'/schedule'}>

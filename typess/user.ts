@@ -12,10 +12,12 @@ export type User = {
   sex: string;
   birthday: string;
   code: string;
+  photo?: string;
   partner: {
     id: number;
     nickname: string;
     sex: string;
     birthday: string;
+    photo?: string;
   };
 };

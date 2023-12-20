@@ -43,3 +43,20 @@ export const userConnect = async (data: { userId?: number; code: string }) => {
   });
   return response.data;
 };
+
+// 회원수정
+export const updateUser = async (data: {
+  id: number;
+  photo?: string;
+  nickname: string;
+  birthday: string;
+  sex: string;
+}) => {
+  const response = await defaultAxios.put(`/user/${data.id}`, {
+    photo: data.photo,
+    nickname: data.nickname,
+    birthday: data.birthday,
+    sex: data.sex,
+  });
+  return response.data;
+};
