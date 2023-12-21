@@ -6,17 +6,33 @@ import React from 'react';
 import styled from 'styled-components';
 
 interface UserInfoProps {
-  user: { photo?: string; nickname: string; birthday: string; sex: string };
+  user: {
+    photo: string | null;
+    nickname: string;
+    birthday: string;
+    sex: string;
+  };
+  imageSrc: any;
   onClick: () => void;
   onChange: (key: string, value: any) => void;
 }
 
-const UserInfo: React.FC<UserInfoProps> = ({ user, onClick, onChange }) => {
+const UserInfo: React.FC<UserInfoProps> = ({
+  user,
+  imageSrc,
+  onClick,
+  onChange,
+}) => {
   return (
     <Container>
       <div className="userPhoto" onClick={onClick}>
-        {user.photo ? (
-          <img src={user.photo} alt="유저프로필이미지" />
+        {imageSrc ? (
+          <img src={imageSrc} alt="미리보기" />
+        ) : user.photo ? (
+          <img
+            src={`${process.env.NEXT_PUBLIC_S3URL}${user.photo}`}
+            alt="유저프로필이미지"
+          />
         ) : (
           <Avatar className="userPhotoNo" icon={<UserOutlined />} />
         )}

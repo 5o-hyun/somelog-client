@@ -12,12 +12,12 @@ export type User = {
   sex: string;
   birthday: string;
   code: string;
-  photo?: string;
+  photo: string | null;
   partner: {
     id: number;
     nickname: string;
     sex: string;
     birthday: string;
-    photo?: string;
+    photo: string | null;
   };
 };

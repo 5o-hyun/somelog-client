@@ -47,7 +47,7 @@ export const userConnect = async (data: { userId?: number; code: string }) => {
 // 회원수정
 export const updateUser = async (data: {
   id: number;
-  photo?: string;
+  photo: string | null;
   nickname: string;
   birthday: string;
   sex: string;
