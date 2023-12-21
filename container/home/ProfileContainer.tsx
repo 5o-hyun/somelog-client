@@ -4,6 +4,7 @@ import useToggle from '@lib/hooks/useToggle';
 import NoNavigationLayout from '@components/base/NoNavigationLayout';
 import Title from '@components/base/Title';
 import ProfileToolbar from '@components/home/profile/ProfileToolbar';
+import UserDangerZone from '@components/home/profile/UserDangerZone';
 import UserInfo from '@components/home/profile/UserInfo';
 import UserInfoPhotoMethod from '@components/home/profile/UserInfoPhotoMethod';
 
@@ -157,6 +158,7 @@ const ProfileContainer = () => {
           onClose={toggleOpenPhotoMethod}
         />
       )}
+      <UserDangerZone />
     </NoNavigationLayout>
   );
 };
