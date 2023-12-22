@@ -1,24 +1,32 @@
+import { Connect } from '@typess/connect';
+
 import PostIt from './PostIt';
 import React from 'react';
 import styled from 'styled-components';
 import 'swiper/css';
 import { Swiper, SwiperSlide } from 'swiper/react';
 
-const PhotoSlider = () => {
+interface PhotoSliderProps {
+  connect?: Connect;
+}
+
+const PhotoSlider: React.FC<PhotoSliderProps> = ({ connect }) => {
   return (
     <Container>
-      <StyledSwiper
-        spaceBetween={50}
-        slidesPerView={1}
-        onSlideChange={() => console.log('slide change')}
-        // onSwiper={(swiper) => console.log(swiper)}
-      >
-        <SwiperSlide>슬라이드1</SwiperSlide>
-        <SwiperSlide>슬라이드2</SwiperSlide>
-        <SwiperSlide>슬라이드3</SwiperSlide>
-        <SwiperSlide>슬라이드4</SwiperSlide>
-      </StyledSwiper>
-      <PostIt />
+      {connect?.sliderStatus === 'Y' && (
+        <StyledSwiper
+          spaceBetween={50}
+          slidesPerView={1}
+          onSlideChange={() => console.log('slide change')}
+          // onSwiper={(swiper) => console.log(swiper)}
+        >
+          <SwiperSlide>슬라이드1</SwiperSlide>
+          <SwiperSlide>슬라이드2</SwiperSlide>
+          <SwiperSlide>슬라이드3</SwiperSlide>
+          <SwiperSlide>슬라이드4</SwiperSlide>
+        </StyledSwiper>
+      )}
+      {connect?.postitStatus === 'Y' && <PostIt info={connect} />}
     </Container>
   );
 };

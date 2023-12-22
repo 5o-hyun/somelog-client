@@ -1,17 +1,29 @@
+import { getConnect } from '@lib/api/connect';
+
+import { Connect } from '@typess/connect';
+
 import Anniversary from '@components/home/Anniversary';
 import FloatButtons from '@components/home/FloatButtons';
 import PhotoSlider from '@components/home/PhotoSlider';
 import Profile from '@components/home/Profile';
 
+import useAuthStore from '@/stores/auth';
+
 import React from 'react';
+import { useQuery } from 'react-query';
 import styled from 'styled-components';
 
 const HomeContainer = () => {
+  const { user } = useAuthStore();
+  const { data: connect } = useQuery<Connect>(['connect', user?.id], () =>
+    getConnect(user?.id as number),
+  );
+
   return (
     <Container>
-      <PhotoSlider />
-      <Anniversary />
-      <Profile />
+      <PhotoSlider connect={connect} />
+      {connect?.DdayStatus === 'Y' && <Anniversary />}
+      {connect?.feelStatus === 'Y' && <Profile />}
       <div className="border" />
       <FloatButtons />
     </Container>

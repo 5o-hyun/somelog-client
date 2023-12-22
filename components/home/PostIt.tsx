@@ -1,10 +1,24 @@
+import { Connect } from '@typess/connect';
+
 import useAuthStore from '@/stores/auth';
 
+import dayjs from 'dayjs';
 import React from 'react';
 import styled from 'styled-components';
 
-const PostIt = () => {
+interface PostItProps {
+  info: Connect;
+}
+
+const PostIt: React.FC<PostItProps> = ({ info }) => {
   const { user } = useAuthStore();
+
+  // db 시작날짜
+  const startDate = dayjs(info.startDate);
+  // 오늘 날짜와의 차이 계산
+  const daysDiff = Math.abs(startDate.diff(dayjs(), 'day'));
+  // + , - 표시
+  const dDaySign = daysDiff >= 0 ? '+' : '-';
 
   return (
     <Container>
@@ -13,7 +27,9 @@ const PostIt = () => {
         <p className="names">
           {user?.nickname}x{user?.partner.nickname}
         </p>
-        <p className="dDay">D + 90</p>
+        <p className="dDay">
+          D {dDaySign} {daysDiff}
+        </p>
         <p className="desc">somelog in love</p>
       </div>
     </Container>
