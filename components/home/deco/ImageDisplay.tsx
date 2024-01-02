@@ -43,7 +43,12 @@ const ImageDisplay: React.FC<ImageDisplayProps> = ({ files, onChange }) => {
   );
   return (
     <Container>
-      <p className="imageTitle">배경 사진</p>
+      <p className="imageTitle">
+        배경 사진{' '}
+        <span className="imageDesc">
+          *저장 버튼을 누르지않으면 설정이 저장되지 않습니다.
+        </span>
+      </p>
       <div className="uploadImageWrapper">
         <Upload
           listType="picture-card"
@@ -74,6 +79,11 @@ const Container = styled.div`
   border-top: 1px solid ${({ theme }) => theme.colors.gray[200]};
   padding-top: 20px;
   .imageTitle {
+    margin-bottom: 8px;
+  }
+  .imageDesc {
+    font-size: 12px;
+    color: ${({ theme }) => theme.colors.gray[500]};
     margin-bottom: 12px;
   }
   .uploadImageWrapper {
