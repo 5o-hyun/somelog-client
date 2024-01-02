@@ -15,8 +15,10 @@ import styled from 'styled-components';
 
 const HomeContainer = () => {
   const { user } = useAuthStore();
-  const { data: connect } = useQuery<Connect>(['connect', user?.id], () =>
-    getConnect(user?.id as number),
+  const { data: connect } = useQuery<Connect>(
+    ['connect', user?.id],
+    () => getConnect(user?.id as number),
+    { enabled: !!user },
   );
 
   return (

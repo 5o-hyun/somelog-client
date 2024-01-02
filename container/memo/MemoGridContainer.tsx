@@ -13,8 +13,10 @@ import { useQuery } from 'react-query';
 
 const MemoContainer = () => {
   const { user } = useAuthStore();
-  const { data: memos } = useQuery<Memos>(['memos', user?.id], () =>
-    getMemos(user?.id as number),
+  const { data: memos } = useQuery<Memos>(
+    ['memos', user?.id],
+    () => getMemos(user?.id as number),
+    { enabled: !!user },
   );
 
   return (

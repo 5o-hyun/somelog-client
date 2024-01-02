@@ -33,6 +33,7 @@ const ScheduleContainer = () => {
   const { data: schedules, refetch: refetchSchedules } = useQuery<Schedules>(
     ['schedules', user?.id],
     () => getScheduleList(user?.id as number),
+    { enabled: !!user },
   );
   const { data: colors } = useQuery<Colors>('colors', getColorList);
 
