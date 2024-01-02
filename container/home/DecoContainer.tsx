@@ -1,22 +1,38 @@
-import { getConnect, updateConnect } from '@lib/api/connect';
+import {
+  createImageConnect,
+  getConnect,
+  getImageConnect,
+  updateConnect,
+} from '@lib/api/connect';
 
 import { Connect } from '@typess/connect';
 
 import Title from '@components/base/Title';
 import DecoDisplay from '@components/home/deco/DecoDisplay';
+import ImageDisplay from '@components/home/deco/ImageDisplay';
 import ProfileToolbar from '@components/home/profile/ProfileToolbar';
 
 import useAuthStore from '@/stores/auth';
 
 import { message } from 'antd';
+import AWS from 'aws-sdk';
 import dayjs, { Dayjs } from 'dayjs';
 import React, { useEffect, useState } from 'react';
 import { useMutation, useQuery } from 'react-query';
+import shortid from 'shortid';
 
 const DecoContainer = () => {
   const { user } = useAuthStore();
-  const { data: connect } = useQuery<Connect>(['connect', user?.id], () =>
-    getConnect(user?.id as number),
+  const { data: connect } = useQuery<Connect>(
+    ['connect', user?.id],
+    () => getConnect(user?.id as number),
+    { enabled: !!user },
+  );
+
+  const { data: backgroundImages } = useQuery(
+    ['backgroundImages', connect?.id],
+    () => getImageConnect(connect?.id as number),
+    { enabled: !!connect },
   );
   const [widget, setWidget] = useState<{
     id?: number;
@@ -79,7 +95,86 @@ const DecoContainer = () => {
 
   const onSave = () => {
     updateConnectInfo.mutate(widget as any);
+    createUploadImage.mutate({
+      connectId: connect?.id,
+      images: files,
+    });
   };
+
+  // 이미지 업로드
+  AWS.config.update({
+    region: 'ap-northeast-2',
+    accessKeyId: process.env.NEXT_PUBLIC_S3_ACCESS_KEY_ID,
+    secretAccessKey: process.env.NEXT_PUBLIC_S3_SECRET_ACCESS_KEY,
+  });
+  const s3 = new AWS.S3();
+
+  const [files, setFiles] = useState<any>([]);
+
+  console.log(files);
+
+  useEffect(() => {
+    if (!backgroundImages) {
+      return;
+    }
+    setFiles(
+      backgroundImages.map((backgroundImage: any) => ({
+        uid: backgroundImage.id,
+        name: 'image.png',
+        status: 'done',
+        // url: `${process.env.NEXT_PUBLIC_S3URL}${backgroundImage.imagePath}`,
+        url: `${backgroundImage.imagePath}`,
+      })),
+    );
+  }, [backgroundImages]);
+
+  const onChangeFile = (e: any) => {
+    s3Upload(e.file.originFileObj);
+  };
+
+  const s3Upload = async (file: File) => {
+    if (!file) return;
+
+    const upload = new AWS.S3.ManagedUpload({
+      params: {
+        Bucket: 'somelogimg', // 버킷이름
+        Key:
+          'connectBackgroundImg/' + dayjs().format('YYYYMMDD-HHmm') + file.name, // 경로와이름설정
+        Body: file, // 파일객체
+        ContentType: file.type,
+      },
+    });
+    const promise = upload.promise();
+    promise.then(
+      function () {
+        setFiles([
+          ...files,
+          {
+            uid: shortid(),
+            name: 'image.png',
+            status: 'done',
+            url: `${
+              process.env.NEXT_PUBLIC_S3URL
+            }connectBackgroundImg/${dayjs().format('YYYYMMDD-HHmm')}${
+              file.name
+            }`,
+          },
+        ]);
+      },
+      function (err) {
+        console.log('에러', err);
+      },
+    );
+  };
+
+  const createUploadImage = useMutation(createImageConnect, {
+    onSuccess: () => {
+      console.log('이미지 등록완료');
+    },
+    onError: () => {
+      console.error('이미지를 등록할수없습니다.');
+    },
+  });
 
   return (
     <>
@@ -90,6 +185,7 @@ const DecoContainer = () => {
         isChecked={onChangeCheck}
         onChange={onChangeStartDate}
       />
+      <ImageDisplay files={files} onChange={onChangeFile} />
     </>
   );
 };

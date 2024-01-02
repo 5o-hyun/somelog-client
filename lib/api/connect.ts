@@ -6,6 +6,26 @@ export const getConnect = async (userId: number) => {
   return data;
 };
 
+// 연인 이미지리스트 조회
+export const getImageConnect = async (connectId: number) => {
+  const { data } = await defaultAxios.get(`/connect/image/${connectId}`);
+  return data;
+};
+
+// 연인 이미지리스트 추가
+export const createImageConnect = async (data: {
+  connectId?: number;
+  images: Array<any>;
+}) => {
+  const { data: result } = await defaultAxios.post(
+    `/connect/image/${data.connectId}`,
+    {
+      images: data.images,
+    },
+  );
+  return result;
+};
+
 // 연결정보 수정
 export const updateConnect = async (data: {
   id?: number;
