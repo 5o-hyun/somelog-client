@@ -49,7 +49,7 @@ const FloatButtons: React.FC = () => {
         <Link href={'/memo'}>
           <FloatButton description="메모함" icon={<BsBox2Heart />} />
         </Link>
-        <Link href={'#'}>
+        <Link href={'/home/inquiry'}>
           <FloatButton description="문의하기" icon={<CommentOutlined />} />
         </Link>
       </Container>
