@@ -167,6 +167,11 @@ const DecoContainer = () => {
     );
   };
 
+  const onDeleteFile = (item: any) => {
+    const fileList = files.filter((file: any) => file !== item);
+    setFiles(fileList);
+  };
+
   const createUploadImage = useMutation(createImageConnect, {
     onSuccess: () => {
       console.log('이미지 등록완료');
@@ -185,7 +190,11 @@ const DecoContainer = () => {
         isChecked={onChangeCheck}
         onChange={onChangeStartDate}
       />
-      <ImageDisplay files={files} onChange={onChangeFile} />
+      <ImageDisplay
+        files={files}
+        onChange={onChangeFile}
+        onDelete={onDeleteFile}
+      />
     </>
   );
 };

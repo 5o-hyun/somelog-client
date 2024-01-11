@@ -7,6 +7,7 @@ import type { RcFile, UploadProps } from 'antd/es/upload';
 import type { UploadFile } from 'antd/es/upload/interface';
 import AWS from 'aws-sdk';
 import React, { useState } from 'react';
+import { MdOutlineDelete } from 'react-icons/md';
 import styled from 'styled-components';
 
 const getBase64 = (file: RcFile): Promise<string> =>
@@ -20,9 +21,14 @@ const getBase64 = (file: RcFile): Promise<string> =>
 interface ImageDisplayProps {
   files: any;
   onChange: (e: any) => void;
+  onDelete: (item: any) => void;
 }
 
-const ImageDisplay: React.FC<ImageDisplayProps> = ({ files, onChange }) => {
+const ImageDisplay: React.FC<ImageDisplayProps> = ({
+  files,
+  onChange,
+  onDelete,
+}) => {
   const [isOpenPreview, toggleOpenPreview] = useToggle();
   const [previewImage, setPreviewImage] = useState('');
 
@@ -56,6 +62,7 @@ const ImageDisplay: React.FC<ImageDisplayProps> = ({ files, onChange }) => {
           multiple
           onPreview={handlePreview}
           onChange={(e) => onChange(e)}
+          onRemove={(item) => onDelete(item)}
         >
           {files?.length >= 6 ? null : uploadButton}
         </Upload>

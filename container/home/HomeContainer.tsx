@@ -1,4 +1,4 @@
-import { getConnect } from '@lib/api/connect';
+import { getConnect, getImageConnect } from '@lib/api/connect';
 import { getMemos } from '@lib/api/memo';
 
 import { Connect } from '@typess/connect';
@@ -18,20 +18,28 @@ import styled from 'styled-components';
 
 const HomeContainer = () => {
   const { user } = useAuthStore();
+
   const { data: connect } = useQuery<Connect>(
     ['connect', user?.id],
     () => getConnect(user?.id as number),
     { enabled: !!user },
   );
+
   const { data: memos } = useQuery<Memos>(
     ['memos', user?.id],
     () => getMemos(user?.id as number),
     { enabled: !!user },
   );
 
+  const { data: images } = useQuery(
+    ['images', connect?.id],
+    () => getImageConnect(connect?.id as number),
+    { enabled: !!connect },
+  );
+
   return (
     <Container>
-      <PhotoSlider connect={connect} />
+      <PhotoSlider connect={connect} images={images} />
       {connect?.DdayStatus === 'Y' && <Anniversary />}
       {connect?.feelStatus === 'Y' && <Profile />}
       <div className="border" />
