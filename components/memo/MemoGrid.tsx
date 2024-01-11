@@ -70,6 +70,7 @@ const Container = styled.div`
       text-overflow: ellipsis;
       -webkit-box-orient: vertical;
       -webkit-line-clamp: 5;
+      white-space: pre-wrap;
       border-top: 1px solid ${({ theme }) => theme.colors.gray[400]};
       padding-top: 8px;
     }

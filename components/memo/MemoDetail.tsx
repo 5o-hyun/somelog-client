@@ -46,7 +46,6 @@ const Container = styled.div`
     overflow: hidden;
     text-overflow: ellipsis;
     -webkit-box-orient: vertical;
-    -webkit-line-clamp: 5;
     border-top: 1px solid ${({ theme }) => theme.colors.gray[400]};
     padding-top: 20px;
     font-size: 18px;
