@@ -13,11 +13,15 @@ export type User = {
   birthday: string;
   code: string;
   photo: string | null;
+  moodEmoji: string | null;
+  moodColor: string | null;
   partner: {
     id: number;
     nickname: string;
     sex: string;
     birthday: string;
     photo: string | null;
+    moodEmoji: string | null;
+    moodColor: string | null;
   };
 };

@@ -51,12 +51,16 @@ export const updateUser = async (data: {
   nickname: string;
   birthday: string;
   sex: string;
+  moodEmoji: string | null;
+  moodColor: string | null;
 }) => {
   const response = await defaultAxios.put(`/user/${data.id}`, {
     photo: data.photo,
     nickname: data.nickname,
     birthday: data.birthday,
     sex: data.sex,
+    moodEmoji: data.moodEmoji,
+    moodColor: data.moodColor,
   });
   return response.data;
 };

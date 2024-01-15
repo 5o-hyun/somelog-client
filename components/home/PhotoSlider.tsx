@@ -14,7 +14,6 @@ interface PhotoSliderProps {
 }
 
 const PhotoSlider: React.FC<PhotoSliderProps> = ({ connect, images }) => {
-  console.log(images);
   return (
     <Container>
       {connect?.sliderStatus === 'Y' && images ? (
