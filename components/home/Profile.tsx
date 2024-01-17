@@ -1,6 +1,9 @@
+import useToggle from '@lib/hooks/useToggle';
+
 import useAuthStore from '@/stores/auth';
 
-import React from 'react';
+import ProfilePhotoModal from './ProfilePhotoModal';
+import React, { useState } from 'react';
 import { FaHeartCirclePlus } from 'react-icons/fa6';
 import { GoPerson } from 'react-icons/go';
 import styled from 'styled-components';
@@ -12,75 +15,95 @@ interface ProfileProps {
 const Profile: React.FC<ProfileProps> = ({ toggleOpenMoodModal }) => {
   const { user } = useAuthStore();
 
+  const [isOpenModal, toggleOpenModal] = useToggle();
+
+  const [url, setUrl] = useState<string>('');
+
+  const onClickPhoto = (url: string) => {
+    setUrl(url);
+    toggleOpenModal();
+  };
+
   return (
-    <Container>
-      {/* 상대방 프로필 */}
-      <div className="profile">
-        <div className="avatar men">
-          {user?.partner.photo ? (
-            <img
-              src={`${process.env.NEXT_PUBLIC_S3URL}${user.partner.photo}`}
-              alt="상대방사진"
-              className="photo"
-            />
-          ) : (
-            <GoPerson />
-          )}
-        </div>
-        <p className="userName">{user?.partner.nickname}</p>
-      </div>
-      <div className="moodContainer">
-        <p className="moodTitle">오늘의 기분</p>
-        <div className="moodWrapper">
-          {/* 상대방 기분 */}
-          <div className="mood">
-            {user?.partner.moodEmoji ? (
-              <ImgWrapper
-                color={
-                  user.partner.moodColor
-                    ? user.partner.moodColor
-                    : 'transparent'
+    <>
+      <Container>
+        {/* 상대방 프로필 */}
+        <div className="profile">
+          <div className="avatar men">
+            {user?.partner.photo ? (
+              <img
+                src={`${process.env.NEXT_PUBLIC_S3URL}${user.partner.photo}`}
+                alt="상대방사진"
+                className="photo"
+                onClick={() =>
+                  onClickPhoto(
+                    `${process.env.NEXT_PUBLIC_S3URL}${user.partner.photo}`,
+                  )
                 }
-              >
-                <img src={user.partner.moodEmoji} />
-              </ImgWrapper>
+              />
             ) : (
-              <FaHeartCirclePlus />
+              <GoPerson />
             )}
           </div>
-          <div className="icon">
-            <img src="/images/home/mood-love.png" />
+          <p className="userName">{user?.partner.nickname}</p>
+        </div>
+        <div className="moodContainer">
+          <p className="moodTitle">오늘의 기분</p>
+          <div className="moodWrapper">
+            {/* 상대방 기분 */}
+            <div className="mood">
+              {user?.partner.moodEmoji ? (
+                <ImgWrapper
+                  color={
+                    user.partner.moodColor
+                      ? user.partner.moodColor
+                      : 'transparent'
+                  }
+                >
+                  <img src={user.partner.moodEmoji} />
+                </ImgWrapper>
+              ) : (
+                <FaHeartCirclePlus />
+              )}
+            </div>
+            <div className="icon">
+              <img src="/images/home/mood-love.png" />
+            </div>
+            {/* 내 기분 */}
+            <div className="mood" onClick={toggleOpenMoodModal}>
+              {user?.moodEmoji ? (
+                <ImgWrapper
+                  color={user.moodColor ? user.moodColor : 'transparent'}
+                >
+                  <img src={user?.moodEmoji} />
+                </ImgWrapper>
+              ) : (
+                <FaHeartCirclePlus />
+              )}
+            </div>
           </div>
-          {/* 내 기분 */}
-          <div className="mood" onClick={toggleOpenMoodModal}>
-            {user?.moodEmoji ? (
-              <ImgWrapper
-                color={user.moodColor ? user.moodColor : 'transparent'}
-              >
-                <img src={user?.moodEmoji} />
-              </ImgWrapper>
+        </div>
+        {/* 내 프로필 */}
+        <div className="profile">
+          <div className="avatar">
+            {user?.photo ? (
+              <img
+                src={`${process.env.NEXT_PUBLIC_S3URL}${user.photo}`}
+                alt="내사진"
+                className="photo"
+                onClick={() =>
+                  onClickPhoto(`${process.env.NEXT_PUBLIC_S3URL}${user.photo}`)
+                }
+              />
             ) : (
-              <FaHeartCirclePlus />
+              <GoPerson />
             )}
           </div>
+          <p className="userName">{user?.nickname}</p>
         </div>
-      </div>
-      {/* 내 프로필 */}
-      <div className="profile">
-        <div className="avatar">
-          {user?.photo ? (
-            <img
-              src={`${process.env.NEXT_PUBLIC_S3URL}${user.photo}`}
-              alt="내사진"
-              className="photo"
-            />
-          ) : (
-            <GoPerson />
-          )}
-        </div>
-        <p className="userName">{user?.nickname}</p>
-      </div>
-    </Container>
+      </Container>
+      {isOpenModal && <ProfilePhotoModal url={url} onClose={toggleOpenModal} />}
+    </>
   );
 };
 const Container = styled.div`
@@ -112,6 +135,7 @@ const Container = styled.div`
         width: 100%;
         height: 100%;
         object-fit: cover;
+        cursor: pointer;
       }
       svg {
         color: ${({ theme }) => theme.colors.gray[400]};
