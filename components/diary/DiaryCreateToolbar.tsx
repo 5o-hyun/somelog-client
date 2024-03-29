@@ -6,7 +6,11 @@ import React from 'react';
 import { IoIosArrowBack, IoMdSave } from 'react-icons/io';
 import styled from 'styled-components';
 
-const DiaryCreateToolbar = () => {
+interface DiaryCreateToolbarProps {
+  onSave: () => void;
+}
+
+const DiaryCreateToolbar: React.FC<DiaryCreateToolbarProps> = ({ onSave }) => {
   return (
     <Container>
       <Link href={'/diary'}>
@@ -17,7 +21,7 @@ const DiaryCreateToolbar = () => {
           title="등록하시겠습니까?"
           okText="등록"
           cancelText="취소"
-          //   onConfirm={onSave}
+          onConfirm={onSave}
         >
           <Button name="저장" icon={<IoMdSave />} size={16} />
         </Popconfirm>
