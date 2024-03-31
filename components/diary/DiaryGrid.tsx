@@ -2,11 +2,33 @@ import useToggle from '@lib/hooks/useToggle';
 
 import DiaryDetailModal from './DiaryDetailModal';
 import { Card } from 'antd';
-import React from 'react';
+import dayjs from 'dayjs';
+import 'dayjs/locale/ko';
+import React, { useEffect, useState } from 'react';
 import styled from 'styled-components';
 
-const DiaryGrid = () => {
+dayjs.locale('ko');
+
+interface DiaryGridProps {
+  diary: any;
+}
+
+const DiaryGrid: React.FC<DiaryGridProps> = ({ diary }) => {
   const [isOpenDetail, toggleOpenDetail] = useToggle();
+
+  // 디데이계산
+  const [startDay, setStartDay] = useState<string>();
+  const [writeDay, setWriteDay] = useState(new Date());
+  useEffect(() => {
+    if (!diary) {
+      return;
+    }
+    setStartDay(diary.date);
+  }, [diary]);
+  const calculate = Math.floor(
+    (writeDay.getTime() - new Date(String(startDay)).getTime()) /
+      (1000 * 3600 * 24),
+  );
 
   return (
     <>
@@ -14,11 +36,15 @@ const DiaryGrid = () => {
         <Card>
           <div className="top">
             <div className="subjectLine">
-              <p className="dateCalculate">100일</p>
-              <p className="subject">분위기좋은카페에서★</p>
+              <p className="dateCalculate">
+                {calculate === 0 ? '첫 만난날' : `${calculate}일`}
+              </p>
+              <p className="subject">{diary.title}</p>
             </div>
             <div className="dateLine">
-              <p className="date">2023.10.27(금)</p>
+              <p className="date">
+                {dayjs(diary.date).format('YYYY.MM.DD(ddd)')}
+              </p>
               <div className="photoIcon">
                 <img src="http://via.placeholder.com/640x480" alt="프로필" />
               </div>
@@ -28,15 +54,11 @@ const DiaryGrid = () => {
             </div>
           </div>
           <div className="photoWrapper">
-            <div className="photo">
-              <img src="http://via.placeholder.com/640x480" alt="이미지" />
-            </div>
-            <div className="photo">
-              <img src="http://via.placeholder.com/640x480" alt="이미지" />
-            </div>
-            <div className="photo">
-              <img src="http://via.placeholder.com/640x480" alt="이미지" />
-            </div>
+            {diary.DiaryImages.map((image: any, index: number) => (
+              <div className="photo" key={index}>
+                <img src={image.imagePath} alt="이미지" />
+              </div>
+            ))}
           </div>
         </Card>
       </Container>
