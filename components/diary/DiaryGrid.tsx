@@ -1,6 +1,3 @@
-import useToggle from '@lib/hooks/useToggle';
-
-import DiaryDetailModal from './DiaryDetailModal';
 import { Card } from 'antd';
 import dayjs from 'dayjs';
 import 'dayjs/locale/ko';
@@ -11,33 +8,41 @@ dayjs.locale('ko');
 
 interface DiaryGridProps {
   diary: any;
+  startDate?: string; // 커플시작일
+  onClickDiary: (id: number) => void;
 }
 
-const DiaryGrid: React.FC<DiaryGridProps> = ({ diary }) => {
-  const [isOpenDetail, toggleOpenDetail] = useToggle();
-
+const DiaryGrid: React.FC<DiaryGridProps> = ({
+  diary,
+  startDate,
+  onClickDiary,
+}) => {
   // 디데이계산
-  const [startDay, setStartDay] = useState<string>();
-  const [writeDay, setWriteDay] = useState(new Date());
+  const [writeDay, setWriteDay] = useState<string>(); // 작성일
+  const [today, setToday] = useState(new Date()); // 오늘
   useEffect(() => {
     if (!diary) {
       return;
     }
-    setStartDay(diary.date);
+    setWriteDay(diary.date);
   }, [diary]);
   const calculate = Math.floor(
-    (writeDay.getTime() - new Date(String(startDay)).getTime()) /
+    (today.getTime() - new Date(String(writeDay)).getTime()) /
       (1000 * 3600 * 24),
   );
 
   return (
     <>
-      <Container onClick={toggleOpenDetail}>
+      <Container onClick={() => onClickDiary(diary.id)}>
         <Card>
           <div className="top">
             <div className="subjectLine">
               <p className="dateCalculate">
-                {calculate === 0 ? '첫 만난날' : `${calculate}일`}
+                {dayjs(writeDay).format('YYYY-MM-DD') === startDate
+                  ? '첫 만난날'
+                  : calculate === 0
+                    ? '오늘'
+                    : `${calculate}일`}
               </p>
               <p className="subject">{diary.title}</p>
             </div>
@@ -62,7 +67,6 @@ const DiaryGrid: React.FC<DiaryGridProps> = ({ diary }) => {
           </div>
         </Card>
       </Container>
-      {isOpenDetail && <DiaryDetailModal onClose={toggleOpenDetail} />}
     </>
   );
 };
@@ -88,6 +92,7 @@ const Container = styled.div`
       }
       .subject {
         color: ${({ theme }) => theme.colors.textColor};
+        font-size: 16px;
       }
     }
     .dateLine {

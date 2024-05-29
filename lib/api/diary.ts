@@ -6,6 +6,12 @@ export const getDiaries = async (userId?: number) => {
   return data;
 };
 
+// 다이어리 조회
+export const getDiary = async (id: number) => {
+  const { data } = await defaultAxios.get(`/diary/${id}`);
+  return data;
+};
+
 // 다이어리 생성
 export const createDiary = async (data: {
   date: string;
