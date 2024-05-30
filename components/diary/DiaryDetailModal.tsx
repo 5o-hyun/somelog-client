@@ -1,28 +1,33 @@
+import { createComment } from '@lib/api/diary';
 import useToggle from '@lib/hooks/useToggle';
 
 import DiaryBigPhotoModal from './DiaryBigPhotoModal';
-import { Input, Modal } from 'antd';
+import { Input, Modal, message } from 'antd';
 import dayjs from 'dayjs';
 import React, { useEffect, useState } from 'react';
+import { useMutation } from 'react-query';
 import styled from 'styled-components';
 
 interface DiaryDetailModalProps {
+  userId?: number;
   diary: any;
   startDate?: string; // 커플시작일
   onClose: () => void;
 }
 
 const DiaryDetailModal: React.FC<DiaryDetailModalProps> = ({
+  userId,
   diary,
   startDate,
   onClose,
 }) => {
   const [imagePath, setImagePath] = useState('');
+  const [writeDay, setWriteDay] = useState<string>(); // 작성일
+  const [today, setToday] = useState(new Date()); // 오늘
+  const [comment, setComment] = useState();
   const [isOpenBigPhoto, toggleOpenBigPhoto] = useToggle();
 
   // 디데이계산
-  const [writeDay, setWriteDay] = useState<string>(); // 작성일
-  const [today, setToday] = useState(new Date()); // 오늘
   useEffect(() => {
     if (!diary) {
       return;
@@ -37,6 +42,37 @@ const DiaryDetailModal: React.FC<DiaryDetailModalProps> = ({
   const onClickImage = (path: string) => {
     setImagePath(path);
     toggleOpenBigPhoto();
+  };
+
+  // 댓글
+  const createCommentMutation = useMutation(createComment, {
+    onSuccess: () => {
+      message.success('댓글을 작성했습니다.');
+    },
+    onError: (err: any) => {
+      err.response.data
+        ? message.error(err.response.data)
+        : message.error('프로필을 수정할수없습니다.');
+    },
+  });
+
+  const onChangeComment = (e: any) => {
+    setComment(e);
+  };
+
+  const onSave = () => {
+    if (!userId) {
+      return message.error('존재하지않는 유저입니다.');
+    }
+    if (!comment) {
+      return message.error('댓글을 작성해주세요.');
+    }
+
+    createCommentMutation.mutate({
+      diaryId: diary.id,
+      userId: userId,
+      comment: comment,
+    });
   };
 
   return (
@@ -78,8 +114,11 @@ const DiaryDetailModal: React.FC<DiaryDetailModalProps> = ({
             댓글 <b>0</b>
           </p>
           <div className="commentCreateForm">
-            <Input placeholder="댓글을 남겨보세요." />
-            <button>작성</button>
+            <Input
+              onChange={(e: any) => onChangeComment(e.target.value)}
+              placeholder="댓글을 남겨보세요."
+            />
+            <button onClick={onSave}>작성</button>
           </div>
           <div className="comment">
             <div className="profile">

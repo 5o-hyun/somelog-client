@@ -58,6 +58,7 @@ const DiaryGridContainer = () => {
       </Container>
       {isOpenDetail && (
         <DiaryDetailModal
+          userId={user?.id}
           diary={diary}
           startDate={connect?.startDate}
           onClose={toggleOpenDetail}

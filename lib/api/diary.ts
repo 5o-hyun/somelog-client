@@ -22,3 +22,12 @@ export const createDiary = async (data: {
   await defaultAxios.post(`/diary`, data);
   return data;
 };
+
+// 댓글 등록
+export const createComment = async (data: {
+  diaryId: number;
+  userId: number;
+  comment: string;
+}) => {
+  await defaultAxios.post(`/diary/${data.diaryId}/comment`, data);
+};
