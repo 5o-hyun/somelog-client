@@ -1,12 +1,17 @@
-import { createComment } from '@lib/api/diary';
+import { createComment, updateComment } from '@lib/api/diary';
 import useToggle from '@lib/hooks/useToggle';
 
 import { Diary } from '@typess/diary';
 
+import Button from '@components/base/Button';
+
+import { DeleteOutlined } from '@ant-design/icons';
+
 import DiaryBigPhotoModal from './DiaryBigPhotoModal';
-import { Input, Modal, message } from 'antd';
+import { Input, Modal, Popconfirm, message } from 'antd';
 import dayjs from 'dayjs';
 import React, { useEffect, useState } from 'react';
+import { FaPen } from 'react-icons/fa6';
 import { useMutation } from 'react-query';
 import styled from 'styled-components';
 
@@ -15,6 +20,8 @@ interface DiaryDetailModalProps {
   diary: Diary;
   startDate?: string; // 커플시작일
   onClose: () => void;
+  refetch: () => void;
+  refetchList: () => void;
 }
 
 const DiaryDetailModal: React.FC<DiaryDetailModalProps> = ({
@@ -22,11 +29,13 @@ const DiaryDetailModal: React.FC<DiaryDetailModalProps> = ({
   diary,
   startDate,
   onClose,
+  refetch,
+  refetchList,
 }) => {
   const [imagePath, setImagePath] = useState('');
   const [writeDay, setWriteDay] = useState<string>(); // 작성일
   const [today, setToday] = useState(new Date()); // 오늘
-  const [comment, setComment] = useState();
+  const [comment, setComment] = useState('');
   const [isOpenBigPhoto, toggleOpenBigPhoto] = useToggle();
 
   // 디데이계산
@@ -35,6 +44,7 @@ const DiaryDetailModal: React.FC<DiaryDetailModalProps> = ({
       return;
     }
     setWriteDay(diary.date);
+    setDiaryComments(diary.DiaryComments);
   }, [diary]);
   const calculate = Math.floor(
     (today.getTime() - new Date(String(writeDay)).getTime()) /
@@ -46,10 +56,13 @@ const DiaryDetailModal: React.FC<DiaryDetailModalProps> = ({
     toggleOpenBigPhoto();
   };
 
-  // 댓글
+  // 댓글 작성
   const createCommentMutation = useMutation(createComment, {
     onSuccess: () => {
       message.success('댓글을 작성했습니다.');
+      refetch();
+      refetchList();
+      setComment('');
     },
     onError: (err: any) => {
       err.response.data
@@ -74,6 +87,52 @@ const DiaryDetailModal: React.FC<DiaryDetailModalProps> = ({
       diaryId: diary.id,
       userId: userId,
       comment: comment,
+    });
+  };
+
+  // 댓글 수정
+  const [diaryComments, setDiaryComments] = useState(diary?.DiaryComments);
+  const [editActiveIndex, setEditActiveIndex] = useState(0);
+  const [editMode, setEditMode] = useState(false);
+
+  const onEditMode = (comment: any) => {
+    if (comment.UserId !== userId) {
+      setEditMode(false);
+      return;
+    }
+    diaryComments.map((v) => {
+      if (v.id === comment.id) {
+        setEditActiveIndex(comment.id);
+        setEditMode((prev) => !prev);
+        setTempComment(comment.comment);
+      }
+    });
+  };
+
+  const [tempComment, setTempComment] = useState('');
+  const updateCommentMutation = useMutation(updateComment, {
+    onSuccess: () => {
+      message.success('댓글을 수정했습니다.');
+      setEditMode(false);
+      refetch();
+    },
+    onError: (err: any) => {
+      err.response.data
+        ? message.error(err.response.data)
+        : message.error('댓글을 수정할수없습니다.');
+    },
+  });
+
+  const onChangeUpdateComment = (e: any) => {
+    setTempComment(e.target.value);
+  };
+
+  const onUpdateComment = (commentId: number) => {
+    updateCommentMutation.mutate({
+      diaryId: diary.id,
+      userId: userId,
+      commentId: commentId,
+      comment: tempComment,
     });
   };
 
@@ -117,27 +176,61 @@ const DiaryDetailModal: React.FC<DiaryDetailModalProps> = ({
           </p>
           <div className="commentCreateForm">
             <Input
+              value={comment}
               onChange={(e: any) => onChangeComment(e.target.value)}
               placeholder="댓글을 남겨보세요."
             />
             <button onClick={onSave}>작성</button>
           </div>
           {diary?.DiaryComments.map((comment) => (
-            <div key={comment.id} className="comment">
-              <div className="left">
-                <div className="profile">
-                  <img
-                    src={`${process.env.NEXT_PUBLIC_S3URL}${comment.User.photo}`}
-                  />
+            <>
+              <div
+                key={comment.id}
+                className={
+                  editMode && editActiveIndex === comment.id
+                    ? 'comment active'
+                    : 'comment'
+                }
+                onClick={() => onEditMode(comment)}
+              >
+                <div className="left">
+                  <div className="profile">
+                    <img
+                      src={`${process.env.NEXT_PUBLIC_S3URL}${comment.User.photo}`}
+                    />
+                  </div>
+                  <p className="commentDetail">{comment.comment}</p>
                 </div>
-                <p className="commentDetail">{comment.comment}</p>
+                <div className="right">
+                  <p className="time">
+                    {dayjs(comment.updatedAt).format('YYYY.MM.DD Ahh:mm')}
+                  </p>
+                </div>
               </div>
-              <div className="right">
-                <p className="time">
-                  {dayjs(comment.updatedAt).format('YYYY.MM.DD A hh:mm')}
-                </p>
+              <div
+                className={
+                  editMode && editActiveIndex === comment.id
+                    ? 'editContents active'
+                    : 'editContents'
+                }
+              >
+                <Input
+                  value={tempComment}
+                  onChange={(e: any) => onChangeUpdateComment(e)}
+                />
+                <div className="buttonG">
+                  <Popconfirm
+                    title="수정하시겠습니까?"
+                    onConfirm={() => onUpdateComment(comment.id)}
+                    okText="수정"
+                    cancelText="취소"
+                  >
+                    <Button icon={<FaPen />} />
+                  </Popconfirm>
+                  <Button icon={<DeleteOutlined />} />
+                </div>
               </div>
-            </div>
+            </>
           ))}
         </div>
       </StyledModal>
@@ -208,6 +301,10 @@ const StyledModal = styled(Modal)`
       display: flex;
       justify-content: space-between;
       align-items: center;
+      cursor: pointer;
+      &.active {
+        background-color: rgba(0, 0, 0, 0.03);
+      }
       .left {
         display: flex;
         align-items: center;
@@ -230,6 +327,30 @@ const StyledModal = styled(Modal)`
       }
       .right {
         .time {
+          width: max-content;
+          color: ${({ theme }) => theme.colors.gray[500]};
+          @media ${({ theme }) => theme.devices.mobile} {
+            font-size: 12px;
+          }
+        }
+      }
+    }
+    .editContents {
+      display: none;
+      gap: 4px;
+      margin-bottom: 8px;
+      &.active {
+        display: flex;
+      }
+      .buttonG {
+        display: flex;
+        gap: 4px;
+        button {
+          width: max-content;
+          height: 32px;
+          svg {
+            margin-right: -2px;
+          }
         }
       }
     }

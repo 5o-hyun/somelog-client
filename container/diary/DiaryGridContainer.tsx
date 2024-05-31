@@ -24,14 +24,14 @@ const DiaryGridContainer = () => {
     () => getConnect(user?.id as number),
     { enabled: !!user },
   );
-  const { data: diaryList } = useQuery<Diaries>(
+  const { data: diaryList, refetch: refetchDiaryList } = useQuery<Diaries>(
     ['diaries', user?.id],
     () => getDiaries(user?.id),
     {
       enabled: !!user,
     },
   );
-  const { data: diary } = useQuery(
+  const { data: diary, refetch: refetchDiary } = useQuery(
     ['diary', diaryId],
     () => getDiary(diaryId),
     {
@@ -62,6 +62,8 @@ const DiaryGridContainer = () => {
           diary={diary}
           startDate={connect?.startDate}
           onClose={toggleOpenDetail}
+          refetch={refetchDiary}
+          refetchList={refetchDiaryList}
         />
       )}
     </>

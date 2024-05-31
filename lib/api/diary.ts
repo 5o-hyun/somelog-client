@@ -31,3 +31,16 @@ export const createComment = async (data: {
 }) => {
   await defaultAxios.post(`/diary/${data.diaryId}/comment`, data);
 };
+
+// 댓글 수정
+export const updateComment = async (data: {
+  diaryId: number;
+  userId?: number;
+  commentId: number;
+  comment: string;
+}) => {
+  await defaultAxios.put(`/diary/${data.diaryId}/comment/${data.commentId}`, {
+    userId: data.userId,
+    comment: data.comment,
+  });
+};
