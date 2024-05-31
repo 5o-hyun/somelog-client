@@ -1,4 +1,4 @@
-import { createComment, updateComment } from '@lib/api/diary';
+import { createComment, deleteComment, updateComment } from '@lib/api/diary';
 import useToggle from '@lib/hooks/useToggle';
 
 import { Diary } from '@typess/diary';
@@ -8,7 +8,7 @@ import Button from '@components/base/Button';
 import { DeleteOutlined } from '@ant-design/icons';
 
 import DiaryBigPhotoModal from './DiaryBigPhotoModal';
-import { Input, Modal, Popconfirm, message } from 'antd';
+import { Empty, Input, Modal, Popconfirm, message } from 'antd';
 import dayjs from 'dayjs';
 import React, { useEffect, useState } from 'react';
 import { FaPen } from 'react-icons/fa6';
@@ -136,6 +136,22 @@ const DiaryDetailModal: React.FC<DiaryDetailModalProps> = ({
     });
   };
 
+  const deleteCommentMutation = useMutation(deleteComment, {
+    onSuccess: () => {
+      message.success('댓글을 삭제했습니다.');
+      refetch();
+      refetchList();
+    },
+    onError: (err: any) => {
+      err.response.data
+        ? message.error(err.response.data)
+        : message.error('댓글을 삭제할수없습니다.');
+    },
+  });
+  const onDeleteComment = (commentId: number) => {
+    deleteCommentMutation.mutate({ diaryId: diary?.id, commentId: commentId });
+  };
+
   return (
     <>
       <StyledModal
@@ -227,12 +243,25 @@ const DiaryDetailModal: React.FC<DiaryDetailModalProps> = ({
                   >
                     <Button icon={<FaPen />} />
                   </Popconfirm>
-                  <Button icon={<DeleteOutlined />} />
+                  <Popconfirm
+                    title="삭제하시겠습니까?"
+                    onConfirm={() => onDeleteComment(comment.id)}
+                    okText="삭제"
+                    cancelText="취소"
+                  >
+                    <Button icon={<DeleteOutlined />} />
+                  </Popconfirm>
                 </div>
               </div>
             </>
           ))}
         </div>
+        {diary?.DiaryComments.length === 0 && (
+          <Empty
+            image={Empty.PRESENTED_IMAGE_SIMPLE}
+            description="아직 댓글이 없어요:("
+          />
+        )}
       </StyledModal>
       {isOpenBigPhoto && (
         <DiaryBigPhotoModal
