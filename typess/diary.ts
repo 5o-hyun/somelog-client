@@ -6,4 +6,28 @@ export type Diaries = {
   DiaryImages: {
     imagePath: string;
   }[];
+  DiaryComments: {
+    UserId: number;
+    User: { photo: string };
+  }[];
 }[];
+
+export type Diary = {
+  id: number;
+  date: string;
+  title: string;
+  createdAt: string;
+  updatedAt: string;
+  UserId: number;
+  DiaryImages: {
+    id: number;
+    imagePath: string;
+  }[];
+  DiaryComments: {
+    id: number;
+    comment: string;
+    updatedAt: string;
+    UserId: number;
+    User: { photo: string };
+  }[];
+};

@@ -50,12 +50,14 @@ const DiaryGrid: React.FC<DiaryGridProps> = ({
               <p className="date">
                 {dayjs(diary.date).format('YYYY.MM.DD(ddd)')}
               </p>
-              <div className="photoIcon">
-                <img src="http://via.placeholder.com/640x480" alt="프로필" />
-              </div>
-              <div className="photoIcon">
-                <img src="http://via.placeholder.com/640x480" alt="프로필" />
-              </div>
+              {diary.DiaryComments.map((user: any, index: number) => (
+                <div key={index} className="photoIcon">
+                  <img
+                    src={`${process.env.NEXT_PUBLIC_S3URL}${user.User.photo}`}
+                    alt="프로필"
+                  />
+                </div>
+              ))}
             </div>
           </div>
           <div className="photoWrapper">

@@ -1,6 +1,8 @@
 import { createComment } from '@lib/api/diary';
 import useToggle from '@lib/hooks/useToggle';
 
+import { Diary } from '@typess/diary';
+
 import DiaryBigPhotoModal from './DiaryBigPhotoModal';
 import { Input, Modal, message } from 'antd';
 import dayjs from 'dayjs';
@@ -10,7 +12,7 @@ import styled from 'styled-components';
 
 interface DiaryDetailModalProps {
   userId?: number;
-  diary: any;
+  diary: Diary;
   startDate?: string; // 커플시작일
   onClose: () => void;
 }
@@ -111,7 +113,7 @@ const DiaryDetailModal: React.FC<DiaryDetailModalProps> = ({
         </div>
         <div className="commentWrapper">
           <p className="commentTitle">
-            댓글 <b>0</b>
+            댓글 <b>{diary?.DiaryComments.length}</b>
           </p>
           <div className="commentCreateForm">
             <Input
@@ -120,18 +122,23 @@ const DiaryDetailModal: React.FC<DiaryDetailModalProps> = ({
             />
             <button onClick={onSave}>작성</button>
           </div>
-          <div className="comment">
-            <div className="profile">
-              <img src="https://via.placeholder.com/640x480" />
+          {diary?.DiaryComments.map((comment) => (
+            <div key={comment.id} className="comment">
+              <div className="left">
+                <div className="profile">
+                  <img
+                    src={`${process.env.NEXT_PUBLIC_S3URL}${comment.User.photo}`}
+                  />
+                </div>
+                <p className="commentDetail">{comment.comment}</p>
+              </div>
+              <div className="right">
+                <p className="time">
+                  {dayjs(comment.updatedAt).format('YYYY.MM.DD A hh:mm')}
+                </p>
+              </div>
             </div>
-            <p className="commentDetail">comment</p>
-          </div>
-          <div className="comment">
-            <div className="profile">
-              <img src="https://via.placeholder.com/640x480" />
-            </div>
-            <p className="commentDetail">comment</p>
-          </div>
+          ))}
         </div>
       </StyledModal>
       {isOpenBigPhoto && (
@@ -199,16 +206,30 @@ const StyledModal = styled(Modal)`
     }
     .comment {
       display: flex;
+      justify-content: space-between;
       align-items: center;
-      gap: 8px;
-      margin-bottom: 8px;
-      .profile {
-        width: 36px;
-        aspect-ratio: 1/1;
-        border-radius: 50%;
-        overflow: hidden;
-        @media ${({ theme }) => theme.devices.mobile} {
-          width: 26px;
+      .left {
+        display: flex;
+        align-items: center;
+        gap: 8px;
+        margin-bottom: 8px;
+        .profile {
+          display: block;
+          width: 36px;
+          height: 36px;
+          border-radius: 50%;
+          overflow: hidden;
+          @media ${({ theme }) => theme.devices.mobile} {
+            width: 26px;
+            height: 26px;
+          }
+        }
+        .commentDetail {
+          flex: 1;
+        }
+      }
+      .right {
+        .time {
         }
       }
     }
