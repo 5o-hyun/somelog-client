@@ -44,3 +44,11 @@ export const updateComment = async (data: {
     comment: data.comment,
   });
 };
+
+// 댓글 삭제
+export const deleteComment = async (data: {
+  diaryId: number;
+  commentId: number;
+}) => {
+  await defaultAxios.delete(`/diary/${data.diaryId}/comment/${data.commentId}`);
+};
