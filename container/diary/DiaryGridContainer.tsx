@@ -10,8 +10,8 @@ import DiaryGrid from '@components/diary/DiaryGrid';
 
 import useAuthStore from '@/stores/auth';
 
-import React, { useState } from 'react';
-import { useQuery } from 'react-query';
+import React, { useEffect, useState } from 'react';
+import { useInfiniteQuery, useQuery } from 'react-query';
 import styled from 'styled-components';
 
 const DiaryGridContainer = () => {
@@ -24,10 +24,19 @@ const DiaryGridContainer = () => {
     () => getConnect(user?.id as number),
     { enabled: !!user },
   );
-  const { data: diaryList, refetch: refetchDiaryList } = useQuery<Diaries>(
+  const {
+    data: diaryList,
+    fetchNextPage, // 다음페이지호출함수
+    hasNextPage, // 다음페이지 가지고있는지 t/f
+    isFetchingNextPage, // 다음페이지 호풀중인지
+  } = useInfiniteQuery<Diaries>(
     ['diaries', user?.id],
-    () => getDiaries(user?.id),
+    ({ pageParam = 1 }) => getDiaries(user?.id as number, pageParam, 5),
     {
+      getNextPageParam: (lastPage, pages) => {
+        if (lastPage.length < 5) return undefined;
+        return pages.length + 1;
+      },
       enabled: !!user,
     },
   );
@@ -44,17 +53,37 @@ const DiaryGridContainer = () => {
     toggleOpenDetail();
   };
 
+  const handleScroll = () => {
+    if (
+      window.innerHeight + document.documentElement.scrollTop + 100 >=
+      document.documentElement.scrollHeight
+    ) {
+      if (hasNextPage && !isFetchingNextPage) {
+        fetchNextPage();
+      }
+    }
+  };
+
+  useEffect(() => {
+    window.addEventListener('scroll', handleScroll);
+    return () => {
+      window.removeEventListener('scroll', handleScroll);
+    };
+  }, [hasNextPage, isFetchingNextPage]);
+
   return (
     <>
       <Container>
-        {diaryList?.map((diary) => (
-          <DiaryGrid
-            key={diary.id}
-            diary={diary}
-            startDate={connect?.startDate}
-            onClickDiary={onClickDiary}
-          />
-        ))}
+        {diaryList?.pages.map((page) =>
+          page.map((diary) => (
+            <DiaryGrid
+              key={diary.id}
+              diary={diary}
+              startDate={connect?.startDate}
+              onClickDiary={onClickDiary}
+            />
+          )),
+        )}
       </Container>
       {isOpenDetail && (
         <DiaryDetailModal
@@ -63,7 +92,6 @@ const DiaryGridContainer = () => {
           startDate={connect?.startDate}
           onClose={toggleOpenDetail}
           refetch={refetchDiary}
-          refetchList={refetchDiaryList}
         />
       )}
     </>

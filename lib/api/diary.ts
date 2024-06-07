@@ -1,8 +1,14 @@
 import { defaultAxios } from './defaultAxios';
 
 // 다이어리 전체조회
-export const getDiaries = async (userId?: number) => {
-  const { data } = await defaultAxios.get(`/diaries/${userId}`);
+export const getDiaries = async (
+  userId: number,
+  page: number,
+  limit: number,
+) => {
+  const { data } = await defaultAxios.get(
+    `/diaries/${userId}?page=${page}&limit=${limit}`,
+  );
   return data;
 };
 

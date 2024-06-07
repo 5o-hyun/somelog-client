@@ -21,7 +21,6 @@ interface DiaryDetailModalProps {
   startDate?: string; // 커플시작일
   onClose: () => void;
   refetch: () => void;
-  refetchList: () => void;
 }
 
 const DiaryDetailModal: React.FC<DiaryDetailModalProps> = ({
@@ -30,7 +29,6 @@ const DiaryDetailModal: React.FC<DiaryDetailModalProps> = ({
   startDate,
   onClose,
   refetch,
-  refetchList,
 }) => {
   const [imagePath, setImagePath] = useState('');
   const [writeDay, setWriteDay] = useState<string>(); // 작성일
@@ -61,7 +59,6 @@ const DiaryDetailModal: React.FC<DiaryDetailModalProps> = ({
     onSuccess: () => {
       message.success('댓글을 작성했습니다.');
       refetch();
-      refetchList();
       setComment('');
     },
     onError: (err: any) => {
@@ -140,7 +137,6 @@ const DiaryDetailModal: React.FC<DiaryDetailModalProps> = ({
     onSuccess: () => {
       message.success('댓글을 삭제했습니다.');
       refetch();
-      refetchList();
     },
     onError: (err: any) => {
       err.response.data
