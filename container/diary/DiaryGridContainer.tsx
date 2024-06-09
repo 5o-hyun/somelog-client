@@ -29,6 +29,7 @@ const DiaryGridContainer = () => {
     fetchNextPage, // 다음페이지호출함수
     hasNextPage, // 다음페이지 가지고있는지 t/f
     isFetchingNextPage, // 다음페이지 호풀중인지
+    refetch: refetchDiaryList,
   } = useInfiniteQuery<Diaries>(
     ['diaries', user?.id],
     ({ pageParam = 1 }) => getDiaries(user?.id as number, pageParam, 5),
@@ -92,6 +93,7 @@ const DiaryGridContainer = () => {
           startDate={connect?.startDate}
           onClose={toggleOpenDetail}
           refetch={refetchDiary}
+          refetchDiaryList={refetchDiaryList}
         />
       )}
     </>

@@ -1,4 +1,9 @@
-import { createComment, deleteComment, updateComment } from '@lib/api/diary';
+import {
+  createComment,
+  deleteComment,
+  deleteDiary,
+  updateComment,
+} from '@lib/api/diary';
 import useToggle from '@lib/hooks/useToggle';
 
 import { Diary } from '@typess/diary';
@@ -21,6 +26,7 @@ interface DiaryDetailModalProps {
   startDate?: string; // 커플시작일
   onClose: () => void;
   refetch: () => void;
+  refetchDiaryList: () => void;
 }
 
 const DiaryDetailModal: React.FC<DiaryDetailModalProps> = ({
@@ -29,6 +35,7 @@ const DiaryDetailModal: React.FC<DiaryDetailModalProps> = ({
   startDate,
   onClose,
   refetch,
+  refetchDiaryList,
 }) => {
   const [imagePath, setImagePath] = useState('');
   const [writeDay, setWriteDay] = useState<string>(); // 작성일
@@ -148,13 +155,37 @@ const DiaryDetailModal: React.FC<DiaryDetailModalProps> = ({
     deleteCommentMutation.mutate({ diaryId: diary?.id, commentId: commentId });
   };
 
+  const deleteDiaryMutation = useMutation(deleteDiary, {
+    onSuccess: () => {
+      message.success('다이어리를 삭제했습니다.');
+      onClose();
+      refetchDiaryList();
+    },
+    onError: (err: any) => {
+      err.response.data
+        ? message.error(err.response.data)
+        : message.error('다이어리를 삭제할수없습니다.');
+    },
+  });
+  const onDeleteDiary = (diaryId: number) => {
+    deleteDiaryMutation.mutate(diaryId);
+  };
+
   return (
     <>
       <StyledModal
         open
         onCancel={onClose}
-        // onOk={onOk}
-        okText="삭제"
+        footer={[
+          <Popconfirm
+            title="삭제하시겠습니까?"
+            onConfirm={() => onDeleteDiary(diary.id)}
+            okText="삭제"
+            cancelText="취소"
+          >
+            <Button icon={<DeleteOutlined />} name="삭제" />
+          </Popconfirm>,
+        ]}
       >
         <div className="top">
           <div className="left">
@@ -381,6 +412,11 @@ const StyledModal = styled(Modal)`
     }
   }
   .ant-modal-footer {
+    display: flex;
+    justify-content: end;
+    p {
+      font-size: 14px;
+    }
     .ant-btn-default {
       display: none;
     }

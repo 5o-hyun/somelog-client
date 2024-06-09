@@ -58,3 +58,8 @@ export const deleteComment = async (data: {
 }) => {
   await defaultAxios.delete(`/diary/${data.diaryId}/comment/${data.commentId}`);
 };
+
+// 다이어리 삭제
+export const deleteDiary = async (diaryId: number) => {
+  await defaultAxios.delete(`/diary/${diaryId}`);
+};
