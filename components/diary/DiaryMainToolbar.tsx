@@ -1,4 +1,4 @@
-import useToggle from '@lib/hooks/useToggle';
+import { Polaroids } from '@typess/diary';
 
 import Button from '@components/base/Button';
 
@@ -9,13 +9,23 @@ import { FaPen } from 'react-icons/fa6';
 import { IoPlayForward } from 'react-icons/io5';
 import styled from 'styled-components';
 
-const DiaryMainToolbar = () => {
-  const [isOpenSwiperModal, toggleOpenSwiperModal] = useToggle();
+interface DiaryMainToolbarProps {
+  polaroids?: Polaroids;
+  startDate?: string;
+  isOpen: boolean;
+  toggleOpen: () => void;
+}
 
+const DiaryMainToolbar: React.FC<DiaryMainToolbarProps> = ({
+  polaroids,
+  startDate,
+  isOpen,
+  toggleOpen,
+}) => {
   return (
     <>
       <Container>
-        <div className="playButton" onClick={toggleOpenSwiperModal}>
+        <div className="playButton" onClick={toggleOpen}>
           <IoPlayForward />
           <p>폴라로이드재생</p>
         </div>
@@ -23,8 +33,12 @@ const DiaryMainToolbar = () => {
           <Button name="글쓰기" icon={<FaPen />} />
         </Link>
       </Container>
-      {isOpenSwiperModal && (
-        <DiarySwiperModal onClose={toggleOpenSwiperModal} />
+      {isOpen && polaroids && (
+        <DiarySwiperModal
+          polaroids={polaroids}
+          startDate={startDate}
+          onClose={toggleOpen}
+        />
       )}
     </>
   );

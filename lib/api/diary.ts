@@ -1,5 +1,11 @@
 import { defaultAxios } from './defaultAxios';
 
+// 폴라로이드 전체조회
+export const getPolaroids = async (userId: number) => {
+  const { data } = await defaultAxios.get(`/diaries/${userId}/polaroid`);
+  return data;
+};
+
 // 다이어리 전체조회
 export const getDiaries = async (
   userId: number,

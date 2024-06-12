@@ -1,3 +1,10 @@
+export type Polaroids = {
+  id: number;
+  date: string;
+  title: string;
+  imagePath: string;
+}[];
+
 export type Diaries = {
   id: number;
   date: string;
