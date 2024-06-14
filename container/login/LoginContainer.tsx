@@ -1,5 +1,7 @@
 import { login } from '@lib/api/user';
 
+import { EyeInvisibleOutlined, EyeTwoTone } from '@ant-design/icons';
+
 import { Button, Input, message } from 'antd';
 import Link from 'next/link';
 import React, { useState } from 'react';
@@ -51,10 +53,13 @@ const LoginContainer = () => {
         </div>
         <div className="contents">
           <p className="contentsTitle">비밀번호</p>
-          <Input
+          <Input.Password
             value={userInfo?.pw}
             onChange={(e) => onChangeInput('pw', e.target.value)}
             placeholder="비밀번호"
+            iconRender={(visible) =>
+              visible ? <EyeTwoTone /> : <EyeInvisibleOutlined />
+            }
           />
         </div>
         <div className="contents">
