@@ -15,6 +15,7 @@ import {
 } from 'react-icons/bs';
 import { GoPlus } from 'react-icons/go';
 import { LiaUserEditSolid } from 'react-icons/lia';
+import { MdOutlineCelebration } from 'react-icons/md';
 import styled from 'styled-components';
 
 const FloatButtons: React.FC = () => {
@@ -36,6 +37,12 @@ const FloatButtons: React.FC = () => {
         </Link>
         <Link href={'/home/profile'}>
           <FloatButton description="프로필" icon={<LiaUserEditSolid />} />
+        </Link>
+        <Link href={'/home/celebration'}>
+          <FloatButton
+            description="기념일관리"
+            icon={<MdOutlineCelebration />}
+          />
         </Link>
         <Link href={'/schedule'}>
           <FloatButton description="일정관리" icon={<BiCalendarHeart />} />
