@@ -13,7 +13,6 @@ const CelebrationToolbar: React.FC<CelebrationToolbarProps> = ({}) => {
       <Link href={'/'}>
         <Button name="돌아가기" icon={<IoIosArrowBack />} size={16} />
       </Link>
-      {/* <Button name="저장" onClick={onClick} icon={<FaPen />} /> */}
     </Container>
   );
 };
