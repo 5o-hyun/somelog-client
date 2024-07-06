@@ -42,7 +42,16 @@ const Schedule: React.FC<ScheduleProps> = ({
               color={pickCategory ? pickCategory.color : '#ddd'}
             >
               <div className="info" onClick={() => onClick(schedule.id)}>
-                <p className="title">{schedule.title}</p>
+                <div className="left">
+                  {schedule.sticker && (
+                    <img
+                      src={`/images/home/celebration/${schedule.sticker}.png`}
+                      alt="기념일"
+                      className="sticker"
+                    />
+                  )}
+                  <p className="title">{schedule.title}</p>
+                </div>
                 <p className="memo">{schedule.memo}</p>
               </div>
               <div className="deleteBtn" onClick={() => onDelete(schedule.id)}>
@@ -92,8 +101,16 @@ const ScheduleBox = styled.div`
     flex: 1;
     padding: 8px 16px;
     padding-right: 0;
-    .title {
-      font-size: 16px;
+    .left {
+      display: flex;
+      align-items: center;
+      .sticker {
+        width: 24px;
+        margin-right: 8px;
+      }
+      .title {
+        font-size: 16px;
+      }
     }
     .memo {
       color: ${({ theme }) => theme.colors.gray[600]};

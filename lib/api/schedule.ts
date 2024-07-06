@@ -6,6 +6,12 @@ export const getScheduleList = async (userId: number) => {
   return data;
 };
 
+// 일정 전체목록 조회
+export const getCelebrationList = async (userId: number) => {
+  const { data } = await defaultAxios.get(`/schedules/${userId}/celebration`);
+  return data;
+};
+
 // 일정 조회
 export const getSchedule = async (id: number) => {
   const { data } = await defaultAxios.get(`/schedule/${id}`);
@@ -20,6 +26,7 @@ export const createSchedule = async (data: {
   endDate: string;
   color: string;
   UserId: number;
+  sticker: number | undefined;
 }) => {
   await defaultAxios.post(`/schedule`, data);
 };
@@ -33,6 +40,7 @@ export const updateSchedule = async (data: {
   endDate: string;
   color: string;
   UserId: number;
+  sticker: number | undefined;
 }) => {
   await defaultAxios.put(`/schedule/${data.id}`, {
     title: data.title,
@@ -41,10 +49,16 @@ export const updateSchedule = async (data: {
     endDate: data.endDate,
     color: data.color,
     UserId: data.UserId,
+    sticker: data.sticker,
   });
 };
 
 // 일정 삭제
 export const deleteSchedule = async (id: number) => {
   await defaultAxios.delete(`/schedule/${id}`);
+};
+
+// 기념일 삭제
+export const deleteCelebration = async (id: number) => {
+  await defaultAxios.put(`/schedule/${id}/celebration`);
 };

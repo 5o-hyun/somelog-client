@@ -6,6 +6,7 @@ import {
   getScheduleList,
   updateSchedule,
 } from '@lib/api/schedule';
+import { getStickerList } from '@lib/api/sticker';
 import useToggle from '@lib/hooks/useToggle';
 
 import { Colors } from '@typess/color';
@@ -14,6 +15,7 @@ import { Schedule, Schedules } from '@typess/schedule';
 import ColorList from '@components/schedule/ColorList';
 import ScheduleList from '@components/schedule/ScheduleList';
 import ScheduleUpsert from '@components/schedule/ScheduleUpsert';
+import StickerList from '@components/schedule/StickerList';
 
 import useAuthStore from '@/stores/auth';
 import { EventContentArg } from '@fullcalendar/core';
@@ -21,7 +23,7 @@ import dayGridPlugin from '@fullcalendar/daygrid';
 import interactionPlugin from '@fullcalendar/interaction';
 import FullCalendar from '@fullcalendar/react';
 
-import { message } from 'antd';
+import { CheckboxProps, message } from 'antd';
 import dayjs from 'dayjs';
 import React, { useState } from 'react';
 import { useEffect } from 'react';
@@ -36,10 +38,12 @@ const ScheduleContainer = () => {
     { enabled: !!user },
   );
   const { data: colors } = useQuery<Colors>('colors', getColorList);
+  const { data: stickers } = useQuery('stickers', getStickerList);
 
   const [isOpenSchedule, toggleSchedule] = useToggle();
   const [isOpenUpsert, toggleUpsert] = useToggle();
   const [isOpenColorSheet, toggleColorSheet] = useToggle();
+  const [isOpenSticker, toggleSticker] = useToggle();
 
   const [selectDate, setSelectDate] = useState();
   const [todaySchedules, setTodaySchedules] = useState<Schedules>([]);
@@ -72,6 +76,14 @@ const ScheduleContainer = () => {
   const renderEventContent = (eventInfo: EventContentArg) => {
     return (
       <ScheduleBox color={eventInfo.backgroundColor}>
+        {eventInfo.event.extendedProps.stickerNumber && (
+          <div className="scheduleIcon">
+            <img
+              src={`/images/home/celebration/${eventInfo.event.extendedProps.stickerNumber}.png`}
+              alt="기념일스티커"
+            />
+          </div>
+        )}
         <p>{eventInfo.event.title}</p>
       </ScheduleBox>
     );
@@ -101,6 +113,7 @@ const ScheduleContainer = () => {
     endDate?: string;
     color?: string;
     UserId?: number;
+    sticker?: number;
   }>({
     id: null,
     title: undefined,
@@ -109,6 +122,7 @@ const ScheduleContainer = () => {
     endDate: undefined,
     color: undefined,
     UserId: undefined,
+    sticker: undefined,
   });
 
   const onChangeUpsertInfo = (key: string, value: any) => {
@@ -189,7 +203,13 @@ const ScheduleContainer = () => {
   };
 
   useEffect(() => {
+    // 스케줄있을때
     if (schedule) {
+      if (schedule.sticker) {
+        setIsCheck(true);
+      } else {
+        setIsCheck(false);
+      }
       return setUpsertInfo({
         id: schedule.id,
         title: schedule.title,
@@ -198,8 +218,11 @@ const ScheduleContainer = () => {
         endDate: schedule.endDate,
         color: schedule.color,
         UserId: schedule.UserId,
+        sticker: schedule.sticker,
       });
     }
+    // 스케줄없을때
+    setIsCheck(false);
     setUpsertInfo({
       id: null,
       title: undefined,
@@ -208,8 +231,37 @@ const ScheduleContainer = () => {
       endDate: dayjs(selectDate).format('YYYY-MM-DD'),
       color: colors?.[0].color,
       UserId: user?.id,
+      sticker: undefined,
     });
   }, [schedule, isOpenUpsert]);
+
+  // 기념일 기능 추가
+  const onClickSticker = (id: number) => {
+    setUpsertInfo((prevUpsertInfo) => ({
+      ...prevUpsertInfo,
+      sticker: id,
+    }));
+    toggleSticker();
+  };
+
+  const [isCheck, setIsCheck] = useState<boolean>(false);
+  const onCheck: CheckboxProps['onChange'] = (e) => {
+    if (e.target.checked) {
+      setIsCheck(true);
+      if (!upsertInfo.sticker) {
+        setUpsertInfo((prevUpsertInfo) => ({
+          ...prevUpsertInfo,
+          sticker: 1,
+        }));
+      }
+    } else {
+      setIsCheck(false);
+      setUpsertInfo((prevUpsertInfo) => ({
+        ...prevUpsertInfo,
+        sticker: undefined,
+      }));
+    }
+  };
 
   return (
     <Container>
@@ -227,14 +279,19 @@ const ScheduleContainer = () => {
         slotEventOverlap={false}
         eventColor="green"
         events={schedules?.map((schedule) => {
-          const pickCategory = colors?.find((v) => v.color === schedule.color);
+          const pickColor = colors?.find((v) => v.color === schedule.color);
 
           return {
             id: schedule.id.toString(),
             title: schedule.title,
             start: schedule.startDate,
             end: schedule.endDate,
-            backgroundColor: pickCategory?.color,
+            backgroundColor: pickColor?.color,
+            extendedProps: {
+              stickerNumber: schedule.sticker
+                ? schedule.sticker.toString()
+                : '',
+            },
           };
         })}
         eventContent={renderEventContent}
@@ -246,6 +303,13 @@ const ScheduleContainer = () => {
           colors={colors}
           onClose={toggleColorSheet}
           onClick={onClickColorSheet}
+        />
+      )}
+      {isOpenSticker && (
+        <StickerList
+          stickers={stickers}
+          onClose={toggleSticker}
+          onClick={onClickSticker}
         />
       )}
       {isOpenSchedule && (
@@ -263,10 +327,13 @@ const ScheduleContainer = () => {
         <ScheduleUpsert
           upsertInfo={upsertInfo}
           colors={colors}
+          isCheck={isCheck}
           onClickColor={toggleColorSheet}
+          onClickSticker={toggleSticker}
           onClose={toggleUpsert}
           onChange={onChangeUpsertInfo}
           onConfirm={onConfirm}
+          onCheck={onCheck}
         />
       )}
     </Container>
@@ -294,10 +361,16 @@ const ScheduleBox = styled.div`
   border-radius: 4px;
   background-color: ${(props) => props.color};
   cursor: pointer;
+  display: flex;
+  align-items: center;
   &:hover,
   &:active,
   &:focus {
     box-shadow: none;
+  }
+  .scheduleIcon {
+    width: 20px;
+    margin-left: 8px;
   }
   p {
     width: 100%;
