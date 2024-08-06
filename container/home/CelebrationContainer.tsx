@@ -17,7 +17,6 @@ const CelebrationContainer = () => {
     () => getCelebrationList(user?.id as number),
     { enabled: !!user },
   );
-  console.log(celebrations);
 
   const deleteCelebrationMutation = useMutation(deleteCelebration, {
     onSuccess: () => {
