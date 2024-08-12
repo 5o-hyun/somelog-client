@@ -34,7 +34,7 @@ const Celebration: React.FC<CelebrationProps> = ({ lists, onDelete }) => {
             </div>
             <Popconfirm
               title="기념일을 해제하시겠습니까?"
-              description="기념일을 해제해도 일정은 삭제되지않습니다"
+              description="기념일을 해제해도 일정은 삭제되지 않습니다"
               onConfirm={() => onConfirmDelete(list.id)}
               okText="해제"
               cancelText="취소"
