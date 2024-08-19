@@ -16,6 +16,7 @@ const Celebration: React.FC<CelebrationProps> = ({ lists, onDelete }) => {
   const onConfirmDelete = (id: number) => {
     onDelete(id);
   };
+
   return (
     <Container>
       {lists ? (
