@@ -25,7 +25,7 @@ const Celebration: React.FC<CelebrationProps> = ({ lists, onDelete }) => {
             <div className="info">
               <img
                 src={`/images/home/celebration/${list.sticker}.png`}
-                alt="스티커"
+                alt="스티커 "
                 className="celebrationSticker"
               />
               <p className="celebrationTitle">{list.title}</p>
