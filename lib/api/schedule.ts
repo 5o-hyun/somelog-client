@@ -6,7 +6,7 @@ export const getScheduleList = async (userId: number) => {
   return data;
 };
 
-// 일정 전체목록 조회
+// 기념일 전체목록 조회
 export const getCelebrationList = async (userId: number) => {
   const { data } = await defaultAxios.get(`/schedules/${userId}/celebration`);
   return data;

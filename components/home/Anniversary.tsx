@@ -1,27 +1,54 @@
+import { getCelebrationList } from '@lib/api/schedule';
+
+import useAuthStore from '@/stores/auth';
+
 import React from 'react';
+import { useQuery } from 'react-query';
 import styled from 'styled-components';
 
 const Anniversary = () => {
+  const { user } = useAuthStore();
+  const { data: celebrations, refetch: refetchCelebrations } = useQuery(
+    ['celebrations', user?.id],
+    () => getCelebrationList(user?.id as number),
+    { enabled: !!user },
+  );
+  const today = new Date();
+
   return (
     <Container>
       <div className="headLine">
         <img src="/images/home/line-love.png" />
       </div>
       <div className="contentsWrapper">
-        <div className="contents">
-          <div className="left">
-            <div className="icon"></div>
-            <span className="title">생일</span>
+        {celebrations ? (
+          <>
+            {celebrations.map((celebration: any) => (
+              <div key={celebration.id} className="contents">
+                <div className="left">
+                  <img
+                    src={`/images/home/celebration/${celebration.sticker}.png`}
+                    alt="스티커"
+                    className="icon"
+                  />
+                  <span className="title">{celebration.title}</span>
+                </div>
+                <div className="date">
+                  D {today > celebration.startDate ? '-' : '+'}{' '}
+                  {Math.floor(
+                    (today.getTime() -
+                      new Date(String(celebration.startDate)).getTime()) /
+                      (1000 * 3600 * 24),
+                  )}
+                </div>
+              </div>
+            ))}
+          </>
+        ) : (
+          <div className="contents none">
+            <p>일정을 등록하고 기념일을 설정해보세요!</p>
           </div>
-          <div className="date">D - 43</div>
-        </div>
-        <div className="contents">
-          <div className="left">
-            <div className="icon"></div>
-            <span className="title">100일</span>
-          </div>
-          <div className="date">D - 102</div>
-        </div>
+        )}
       </div>
       <div className="bottomLine">
         <img src="/images/home/line-love.png" />
@@ -43,14 +70,22 @@ const Container = styled.div`
     .contents {
       display: flex;
       justify-content: space-between;
+      &.none {
+        padding: 8px 0;
+        p {
+          width: 100%;
+          text-align: center;
+          text-decoration: underline;
+          text-underline-offset: 4px;
+          cursor: pointer;
+        }
+      }
       .left {
         display: flex;
         align-items: center;
         gap: 8px;
         .icon {
           width: 20px;
-          height: 20px;
-          background-color: gray;
         }
       }
       .date {
