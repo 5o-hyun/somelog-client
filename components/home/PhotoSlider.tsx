@@ -16,7 +16,7 @@ interface PhotoSliderProps {
 const PhotoSlider: React.FC<PhotoSliderProps> = ({ connect, images }) => {
   return (
     <Container>
-      {connect?.sliderStatus === 'Y' && images ? (
+      {connect?.sliderStatus === 'Y' && images && (
         <StyledSwiper
           slidesPerView={1}
           pagination={{
@@ -31,8 +31,6 @@ const PhotoSlider: React.FC<PhotoSliderProps> = ({ connect, images }) => {
             </SwiperSlide>
           ))}
         </StyledSwiper>
-      ) : (
-        'ss'
       )}
       {connect?.postitStatus === 'Y' && <PostIt info={connect} />}
     </Container>

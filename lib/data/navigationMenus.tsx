@@ -10,7 +10,7 @@ import {
 export const navigationMenu = [
   { id: 1, name: 'home', icon: <BsHouseHeart />, link: '/' },
   { id: 2, name: 'schedule', icon: <BiCalendarHeart />, link: '/schedule' },
-  { id: 3, name: 'chat', icon: <BsChatHeart />, link: '/chat' },
+  // { id: 3, name: 'chat', icon: <BsChatHeart />, link: '/chat' },
   { id: 4, name: 'diary', icon: <BsPostcardHeart />, link: '/diary' },
   { id: 5, name: 'memo', icon: <BsBox2Heart />, link: '/memo' },
 ];

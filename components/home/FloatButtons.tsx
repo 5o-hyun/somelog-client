@@ -29,9 +29,9 @@ const FloatButtons: React.FC = () => {
         icon={<GoPlus />}
         onClick={() => toggleOpenMenu()}
       >
-        <Link href={'#'}>
+        {/* <Link href={'#'}>
           <FloatButton description="마켓" icon={<BsShop />} />
-        </Link>
+        </Link> */}
         <Link href={'/home/deco'}>
           <FloatButton description="홈꾸미기" icon={<BsHouseHeart />} />
         </Link>
@@ -47,9 +47,9 @@ const FloatButtons: React.FC = () => {
         <Link href={'/schedule'}>
           <FloatButton description="일정관리" icon={<BiCalendarHeart />} />
         </Link>
-        <Link href={'/chat'}>
+        {/* <Link href={'/chat'}>
           <FloatButton description="채팅" icon={<BsChatHeart />} />
-        </Link>
+        </Link> */}
         <Link href={'/diary'}>
           <FloatButton description="다이어리" icon={<BsPostcardHeart />} />
         </Link>

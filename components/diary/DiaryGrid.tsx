@@ -26,8 +26,9 @@ const DiaryGrid: React.FC<DiaryGridProps> = ({
     }
     setWriteDay(diary.date);
   }, [diary]);
+
   const calculate = Math.floor(
-    (today.getTime() - new Date(String(writeDay)).getTime()) /
+    (new Date(startDate).getTime() - new Date(String(writeDay)).getTime()) /
       (1000 * 3600 * 24),
   );
 
@@ -42,7 +43,7 @@ const DiaryGrid: React.FC<DiaryGridProps> = ({
                   ? '첫 만난날'
                   : calculate === 0
                     ? '오늘'
-                    : `${calculate}일`}
+                    : `${Math.abs(calculate)}일`}
               </p>
               <p className="subject">{diary.title}</p>
             </div>

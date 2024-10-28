@@ -52,7 +52,7 @@ const DiaryDetailModal: React.FC<DiaryDetailModalProps> = ({
     setDiaryComments(diary.DiaryComments);
   }, [diary]);
   const calculate = Math.floor(
-    (today.getTime() - new Date(String(writeDay)).getTime()) /
+    (new Date(startDate).getTime() - new Date(String(writeDay)).getTime()) /
       (1000 * 3600 * 24),
   );
 
@@ -194,7 +194,7 @@ const DiaryDetailModal: React.FC<DiaryDetailModalProps> = ({
                 ? '첫 만난날'
                 : calculate === 0
                   ? '오늘'
-                  : `${calculate}일`}
+                  : `${Math.abs(calculate)}일`}
             </p>
             <p className="date">
               {dayjs(diary?.date).format('YYYY.MM.DD(ddd)')}

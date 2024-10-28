@@ -2,6 +2,7 @@ import { getCelebrationList } from '@lib/api/schedule';
 
 import useAuthStore from '@/stores/auth';
 
+import dayjs from 'dayjs';
 import React from 'react';
 import { useQuery } from 'react-query';
 import styled from 'styled-components';
@@ -14,6 +15,7 @@ const Anniversary = () => {
     { enabled: !!user },
   );
   const today = new Date();
+  console.log(today.getTime());
 
   return (
     <Container>
@@ -21,9 +23,19 @@ const Anniversary = () => {
         <img src="/images/home/line-love.png" />
       </div>
       <div className="contentsWrapper">
-        {celebrations ? (
-          <>
-            {celebrations.map((celebration: any) => (
+        {celebrations && celebrations.length > 0 ? (
+          celebrations.map((celebration: any) => {
+            const celebrationDate = new Date(celebration.startDate);
+            const diffInDays = Math.floor(
+              (celebrationDate.getTime() - today.getTime()) /
+                (1000 * 3600 * 24),
+            );
+            const dDay =
+              Math.sign(diffInDays) >= 0
+                ? `- ${diffInDays}`
+                : `+ ${Math.abs(diffInDays)}`;
+
+            return (
               <div key={celebration.id} className="contents">
                 <div className="left">
                   <img
@@ -33,17 +45,10 @@ const Anniversary = () => {
                   />
                   <span className="title">{celebration.title}</span>
                 </div>
-                <div className="date">
-                  D {today > celebration.startDate ? '-' : '+'}{' '}
-                  {Math.floor(
-                    (today.getTime() -
-                      new Date(String(celebration.startDate)).getTime()) /
-                      (1000 * 3600 * 24),
-                  )}
-                </div>
+                <div className="date">D {dDay}</div>
               </div>
-            ))}
-          </>
+            );
+          })
         ) : (
           <div className="contents none">
             <p>일정을 등록하고 기념일을 설정해보세요!</p>

@@ -25,7 +25,7 @@ const PostIt: React.FC<PostItProps> = ({ info }) => {
       <img src="/images/home/postit2.png" alt="포스트잇" />
       <div className="text">
         <p className="names">
-          {user?.partner.nickname}x{user?.nickname}
+          {user?.partner?.nickname}x{user?.nickname}
         </p>
         <p className="dDay">
           D {dDaySign} {daysDiff}

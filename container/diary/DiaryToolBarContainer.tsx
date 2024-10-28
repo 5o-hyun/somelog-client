@@ -9,6 +9,7 @@ import DiaryMainToolbar from '@components/diary/DiaryMainToolbar';
 
 import useAuthStore from '@/stores/auth';
 
+import { message } from 'antd';
 import React from 'react';
 import { useQuery } from 'react-query';
 
@@ -27,12 +28,23 @@ const DiaryToolBarContainer = () => {
     { enabled: !!user },
   );
 
+  const onClickPlayButton = () => {
+    if (!polaroids) {
+      return;
+    }
+    if (polaroids.length > 0) {
+      toggleOpenSwiperModal();
+    } else {
+      message.warning('글쓰기로 폴라로이드를 남겨주세요!');
+    }
+  };
+
   return (
     <DiaryMainToolbar
       polaroids={polaroids}
       startDate={connect?.startDate}
       isOpen={isOpenSwiperModal}
-      toggleOpen={toggleOpenSwiperModal}
+      toggleOpen={onClickPlayButton}
     />
   );
 };

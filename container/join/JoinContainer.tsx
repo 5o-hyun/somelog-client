@@ -258,6 +258,12 @@ const JoinContainer = () => {
       title: '연인연결',
       content: (
         <div className="connectWrapper">
+          <Link href={'/'}>
+            <div className="homeButton">
+              <p>썸로그 이용하러 가기</p>
+              <span>*커플연결이 안되면 이용에 불편함이 있을 수 있습니다.</span>
+            </div>
+          </Link>
           <p className="title">나의 초대장 링크를 상대방에게 공유하세요</p>
           <div className="imgWrapper">
             <img src="/images/join/connect.png" alt="커플이미지" />
@@ -449,6 +455,30 @@ const Container = styled.div`
       color: ${({ theme }) => theme.colors.primaryColor};
       text-decoration: underline;
       text-underline-offset: 4px;
+    }
+  }
+  .homeButton {
+    background-color: ${({ theme }) => theme.colors.primaryColor};
+    border-radius: 4px;
+    height: 60px;
+    margin-bottom: 20px;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+    color: #fff;
+    cursor: pointer;
+    &:hover {
+      background-color: ${({ theme }) => theme.colors.subColor};
+    }
+    p {
+      font-size: 18px;
+      margin-bottom: 4px;
+      font-weight: bold;
+    }
+    span {
+      font-size: 12px;
+      color: ${({ theme }) => theme.colors.textColor};
     }
   }
 `;

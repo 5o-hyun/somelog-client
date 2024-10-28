@@ -17,7 +17,7 @@ import Profile from '@components/home/Profile';
 
 import useAuthStore from '@/stores/auth';
 
-import { message } from 'antd';
+import { Empty, message } from 'antd';
 import React, { useEffect, useState } from 'react';
 import {
   QueryClient,
@@ -111,6 +111,12 @@ const HomeContainer = () => {
           onChange={onChange}
           onSave={onSave}
           onClose={toggleOpenMoodModal}
+        />
+      )}
+      {!connect && (
+        <Empty
+          image={Empty.PRESENTED_IMAGE_SIMPLE}
+          description="커플 연결을 먼저 해주세요!"
         />
       )}
       <FloatButtons />
