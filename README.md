@@ -1,5 +1,5 @@
 
-![썸로그표지](https://github.com/user-attachments/assets/2808444c-75ea-4784-ab44-d7910f7fa749)
+![썸로그표지](https://github.com/user-attachments/assets/36f7bf70-e1e3-4b3c-9db5-1e05229d65e0)
 
 
 <h1 align="middle">썸로그</h1>
